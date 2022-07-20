@@ -16,8 +16,7 @@
  # along with piured-engine.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-"use strict"; // good practice - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
-
+'use strict'; // good practice - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
 
 /**
  * This class holds the configuration of a stage.
@@ -46,27 +45,22 @@
  * ) ;
  *
  */
-class StageConfig {
 
-    _SSCFile ;
-    _audioFile ;
-    _playBackSpeed ;
-    _offset ;
-    _resourcePath ;
-    _noteskins ;
-    _onReadyToStart = undefined ;
+export class StageConfig {
+    _resourcePath;
 
-
-    constructor(SSCFile, audioFile, playBackSpeed, offset, noteskins, onReadyToStart = () => {} ) {
-        this._SSCFile = SSCFile;
-        this._audioFile = audioFile;
-        this._playBackSpeed = playBackSpeed;
-        this._offset = offset;
+    constructor(
+        private _SSCFile: string,
+        private _audioFile: string,
+        private _playBackSpeed: number,
+        private _offset: number,
+        private _noteskins: string,
+        private _onReadyToStart: () => void = () => {
+            // noop
+        }
+    ) {
         this._resourcePath = '../';
-        this._noteskins = noteskins;
-        this._onReadyToStart = onReadyToStart ;
     }
-
 
     get SSCFile() {
         return this._SSCFile;
@@ -96,5 +90,3 @@ class StageConfig {
         return this._onReadyToStart;
     }
 }
-
-export {StageConfig}

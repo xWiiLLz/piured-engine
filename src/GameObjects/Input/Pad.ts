@@ -18,80 +18,91 @@
  */
 'use strict'; // good practice - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
 
-import { GameObject } from '../GameObject.js';
+import { PadConfig } from 'src/Config/KeyInputConfig';
+import { Engine } from 'src/Engine';
+import { ResourceManager } from 'src/Resources/ResourceManager';
+import { Panels } from 'src/Types/Panels';
+import { GameObject } from '../GameObject';
+import { FrameLog } from '../Sequence/SeqLog/FrameLog';
 
-class Pad extends GameObject {
-    constructor(resourceManager, engine, keyMap, padId, frameLog) {
+export class Pad extends GameObject {
+    private _dlKey?: string;
+    private _ulKey?: string;
+    private _cKey?: string;
+    private _urKey?: string;
+    private _drKey?: string;
+    private _dlKeyPressed = false;
+    private _ulKeyPressed = false;
+    private _cKeyPressed = false;
+    private _urKeyPressed = false;
+    private _drKeyPressed = false;
+    private _dlKeyHold = false;
+    private _ulKeyHold = false;
+    private _cKeyHold = false;
+    private _urKeyHold = false;
+    private _drKeyHold = false;
+
+    constructor(
+        resourceManager: ResourceManager,
+        engine: Engine,
+        keyMap: PadConfig | null,
+        private _padId: string,
+        public frameLog: FrameLog
+    ) {
         super(resourceManager, engine);
         // Key maps
-        if (keyMap !== null) {
-            this._dlKey = keyMap.dl.toLowerCase();
-            this._ulKey = keyMap.ul.toLowerCase();
-            this._cKey = keyMap.c.toLowerCase();
-            this._urKey = keyMap.ur.toLowerCase();
-            this._drKey = keyMap.dr.toLowerCase();
-        }
-
-        this._dlKeyPressed = false;
-        this._ulKeyPressed = false;
-        this._cKeyPressed = false;
-        this._urKeyPressed = false;
-        this._drKeyPressed = false;
-
-        this._dlKeyHold = false;
-        this._ulKeyHold = false;
-        this._cKeyHold = false;
-        this._urKeyHold = false;
-        this._drKeyHold = false;
-
-        this._padId = padId;
-
-        this.frameLog = frameLog;
+        this._dlKey = keyMap?.dl?.toLowerCase?.();
+        this._ulKey = keyMap?.ul?.toLowerCase?.();
+        this._cKey = keyMap?.c?.toLowerCase?.();
+        this._urKey = keyMap?.ur?.toLowerCase?.();
+        this._drKey = keyMap?.dr?.toLowerCase?.();
     }
 
-    isPressed(kind: string) {
+    isPressed(kind: Panels) {
         switch (kind) {
-            case 'dl':
+            case Panels.downLeft:
                 return this.dlKeyPressed;
                 break;
-            case 'ul':
+            case Panels.upLeft:
                 return this.ulKeyPressed;
                 break;
-            case 'c':
+            case Panels.center:
                 return this.cKeyPressed;
                 break;
-            case 'ur':
+            case Panels.upRight:
                 return this.urKeyPressed;
                 break;
-            case 'dr':
+            case Panels.downRight:
                 return this.drKeyPressed;
                 break;
         }
     }
 
-    isHeld(kind) {
+    isHeld(kind: Panels) {
         switch (kind) {
-            case 'dl':
+            case Panels.downLeft:
                 return this.dlKeyHold;
                 break;
-            case 'ul':
+            case Panels.upLeft:
                 return this.ulKeyHold;
                 break;
-            case 'c':
+            case Panels.center:
                 return this.cKeyHold;
                 break;
-            case 'ur':
+            case Panels.upRight:
                 return this.urKeyHold;
                 break;
-            case 'dr':
+            case Panels.downRight:
                 return this.drKeyHold;
                 break;
         }
     }
 
-    ready() {}
+    ready() {
+        // noop
+    }
 
-    update(delta) {
+    update(delta: number) {
         // to avoid login every time
         if (this.dlKeyPressed !== false) {
             this.dlKeyPressed = false;
@@ -166,9 +177,14 @@ class Pad extends GameObject {
         return this._dlKeyPressed;
     }
 
-    set dlKeyPressed(value) {
+    set dlKeyPressed(value: boolean) {
         if (value === true) {
-            this.frameLog.logPadInput('dl', this._padId, 'pressed', value);
+            this.frameLog.logPadInput(
+                Panels.downLeft,
+                this._padId,
+                'pressed',
+                value
+            );
         }
         this._dlKeyPressed = value;
     }
@@ -177,9 +193,14 @@ class Pad extends GameObject {
         return this._ulKeyPressed;
     }
 
-    set ulKeyPressed(value) {
+    set ulKeyPressed(value: boolean) {
         if (value === true) {
-            this.frameLog.logPadInput('ul', this._padId, 'pressed', value);
+            this.frameLog.logPadInput(
+                Panels.upLeft,
+                this._padId,
+                'pressed',
+                value
+            );
         }
         this._ulKeyPressed = value;
     }
@@ -188,9 +209,14 @@ class Pad extends GameObject {
         return this._cKeyPressed;
     }
 
-    set cKeyPressed(value) {
+    set cKeyPressed(value: boolean) {
         if (value === true) {
-            this.frameLog.logPadInput('c', this._padId, 'pressed', value);
+            this.frameLog.logPadInput(
+                Panels.center,
+                this._padId,
+                'pressed',
+                value
+            );
         }
         this._cKeyPressed = value;
     }
@@ -199,9 +225,14 @@ class Pad extends GameObject {
         return this._urKeyPressed;
     }
 
-    set urKeyPressed(value) {
+    set urKeyPressed(value: boolean) {
         if (value === true) {
-            this.frameLog.logPadInput('ur', this._padId, 'pressed', value);
+            this.frameLog.logPadInput(
+                Panels.upRight,
+                this._padId,
+                'pressed',
+                value
+            );
         }
         this._urKeyPressed = value;
     }
@@ -210,9 +241,14 @@ class Pad extends GameObject {
         return this._drKeyPressed;
     }
 
-    set drKeyPressed(value) {
+    set drKeyPressed(value: boolean) {
         if (value === true) {
-            this.frameLog.logPadInput('dr', this._padId, 'pressed', value);
+            this.frameLog.logPadInput(
+                Panels.downRight,
+                this._padId,
+                'pressed',
+                value
+            );
         }
         this._drKeyPressed = value;
     }
@@ -221,8 +257,8 @@ class Pad extends GameObject {
         return this._dlKeyHold;
     }
 
-    set dlKeyHold(value) {
-        this.frameLog.logPadInput('dl', this._padId, 'hold', value);
+    set dlKeyHold(value: boolean) {
+        this.frameLog.logPadInput(Panels.downLeft, this._padId, 'hold', value);
         this._dlKeyHold = value;
     }
 
@@ -230,8 +266,8 @@ class Pad extends GameObject {
         return this._ulKeyHold;
     }
 
-    set ulKeyHold(value) {
-        this.frameLog.logPadInput('ul', this._padId, 'hold', value);
+    set ulKeyHold(value: boolean) {
+        this.frameLog.logPadInput(Panels.upLeft, this._padId, 'hold', value);
         this._ulKeyHold = value;
     }
 
@@ -239,8 +275,8 @@ class Pad extends GameObject {
         return this._cKeyHold;
     }
 
-    set cKeyHold(value) {
-        this.frameLog.logPadInput('c', this._padId, 'hold', value);
+    set cKeyHold(value: boolean) {
+        this.frameLog.logPadInput(Panels.center, this._padId, 'hold', value);
         this._cKeyHold = value;
     }
 
@@ -248,8 +284,8 @@ class Pad extends GameObject {
         return this._urKeyHold;
     }
 
-    set urKeyHold(value) {
-        this.frameLog.logPadInput('ur', this._padId, 'hold', value);
+    set urKeyHold(value: boolean) {
+        this.frameLog.logPadInput(Panels.upRight, this._padId, 'hold', value);
         this._urKeyHold = value;
     }
 
@@ -257,10 +293,8 @@ class Pad extends GameObject {
         return this._drKeyHold;
     }
 
-    set drKeyHold(value) {
-        this.frameLog.logPadInput('dr', this._padId, 'hold', value);
+    set drKeyHold(value: boolean) {
+        this.frameLog.logPadInput(Panels.downRight, this._padId, 'hold', value);
         this._drKeyHold = value;
     }
 }
-
-export { Pad };

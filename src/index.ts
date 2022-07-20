@@ -1,9 +1,9 @@
-import { Engine as PiuredEngine } from './src/Engine.js.js';
-import { StageConfig } from './src/Config/StageConfig.js.js';
+import { Engine as PiuredEngine } from './Engine';
+import { StageConfig } from './Config/StageConfig';
 import { KeyInputConfig } from './Config/KeyInputConfig';
-import { PlayerConfig } from './src/Config/PlayerConfig.js.js';
-import { RemoteInput } from './src/Config/RemoteInput.js.js';
-import { TouchInputConfig } from './src/Config/TouchInputConfig.js.js';
+import { PlayerConfig } from './Config/PlayerConfig';
+import { RemoteInput } from './Config/RemoteInput';
+import { TouchInputConfig } from './Config/TouchInputConfig';
 
 export {
     PiuredEngine,

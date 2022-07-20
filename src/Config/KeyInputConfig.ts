@@ -22,7 +22,7 @@ import { InputConfig } from './InputConfig';
 
 type Key = KeyboardEvent['key'];
 
-type PadConfig = {
+export type PadConfig = {
     [panel in Panels]: Key;
 };
 

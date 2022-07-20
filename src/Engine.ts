@@ -19,18 +19,18 @@
  *
  */
 
-import { Song } from './Song/Song.js';
-import { ResourceManager } from './Resources/ResourceManager.js';
-import { Stage } from './GameObjects/Stage/Stage.js';
-import { RemoteInput } from './Config/RemoteInput.js';
+import { Song } from './Song/Song';
+import { ResourceManager } from './Resources/ResourceManager';
+import { Stage } from './GameObjects/Stage/Stage';
+import { RemoteInput } from './Config/RemoteInput';
 import * as THREE from 'three';
 import TWEEN, { Tween } from '@tweenjs/tween.js';
-import { StageConfig } from './Config/StageConfig.js';
+import { StageConfig } from './Config/StageConfig';
 import { Scene } from 'three';
-import { PlayerConfig } from './Config/PlayerConfig.js';
-import { GameObject } from './GameObjects/GameObject.js';
-import { KeyInput } from './GameObjects/Input/KeyInput.js';
-import { TouchInput } from './GameObjects/Input/TouchInput.js';
+import { PlayerConfig } from './Config/PlayerConfig';
+import { GameObject } from './GameObjects/GameObject';
+import { KeyInput } from './GameObjects/Input/KeyInput';
+import { TouchInput } from './GameObjects/Input/TouchInput';
 
 /**
  * PIURED is a Pump It Up stage simulator that works directly in your browser.
@@ -178,7 +178,7 @@ class Engine {
     private _inputList = [];
     private _onKeyDownList: KeyInput[] = [];
     private _onKeyUpList = [];
-    private _onTouchDownList: TouchInput = [];
+    private _onTouchDownList: TouchInput[] = [];
     private _onTouchUpList = [];
     private _inputFrameLogList = [];
     private _id?: string;
@@ -198,13 +198,13 @@ class Engine {
     song?: Song;
     stage?: Stage;
     scene?: Scene;
-    clock;
-    camera;
-    renderer;
+    clock?: THREE.Clock;
+    camera?: THREE.Camera;
+    renderer?: THREE.WebGLRenderer;
 
-    containerId;
+    containerId?: string;
     window?: Window;
-    resourcePath: string;
+    resourcePath?: string;
     playBackSpeed: any;
 
     /**
@@ -255,9 +255,11 @@ class Engine {
             preserveDrawingBuffer: false,
         });
         this.renderer.outputEncoding = THREE.sRGBEncoding;
-        this.renderer.gammaInput = true;
 
-        this.renderer.gammaOutput = true;
+        // TODO: Fix these 2 accesses
+        (this.renderer as any).gammaInput = true;
+        (this.renderer as any).gammaOutput = true;
+
         // Important for HiDPI devices.
 
         this.renderer.setPixelRatio(pixelRatio);
