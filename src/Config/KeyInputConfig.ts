@@ -16,10 +16,27 @@
  # along with piured-engine.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-"use strict"; // good practice - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
 
+import { Panels } from 'src/Types/Panels';
+import { InputConfig } from './InputConfig';
 
+type Key = KeyboardEvent['key'];
 
+type PadConfig = {
+    [panel in Panels]: Key;
+};
+
+type PadConfigArg = {
+    [panel in keyof typeof Panels]: Key;
+};
+
+const mapPadConfig = (input: PadConfigArg) =>
+    Object.fromEntries(
+        Object.entries(input).map(
+            ([enumKey, value]) =>
+                [Panels[enumKey as keyof typeof Panels], value] as const
+        )
+    ) as PadConfig;
 /**
  * Class for configuring the keyboard as input method.
  * For registering key strokes, it is necessary to pass the key events into the engine through methods {@link Engine#keyDown}
@@ -42,18 +59,16 @@
  *    dr: 'N'
  * }) ;
  */
-class KeyInputConfig {
 
-    _lpad ;
-    _rpad ;
+export class KeyInputConfig extends InputConfig {
+    private _lpad: PadConfig;
+    private _rpad: PadConfig;
+    constructor(leftPad: PadConfigArg, rightPad: PadConfigArg) {
+        super();
 
-    constructor(lpad, rpad) {
-
-        this._lpad = lpad ;
-        this._rpad = rpad ;
-
+        this._lpad = mapPadConfig(leftPad);
+        this._rpad = mapPadConfig(rightPad);
     }
-
 
     get lpad() {
         return this._lpad;
@@ -62,8 +77,4 @@ class KeyInputConfig {
     get rpad() {
         return this._rpad;
     }
-
-
 }
-
-export {KeyInputConfig}

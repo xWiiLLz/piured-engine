@@ -16,28 +16,15 @@
  # along with piured-engine.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-"use strict"; // good practice - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
 
+import { InputConfig } from './InputConfig';
 
-class GameObject {
-
-    _resourceManager ;
-
-    constructor(resourceManager, engine) {
-        this._resourceManager = resourceManager ;
-        this.engine = engine ;
-        engine.addToUpdateList(this) ;
-    }
-
-    ready() {
-
-    }
-
-
-    update(delta) {
-
-    }
-
-}
-
-export { GameObject } ;
+/**
+ * This class configures a remote input for a remote player. Make sure you frame the logs corresponding to players
+ * using remote input through {@link Engine#logFrame}
+ *
+ * @example
+ *
+ * let remoteInputConfig = new remoteInput() ;
+ */
+export class RemoteInput extends InputConfig {}

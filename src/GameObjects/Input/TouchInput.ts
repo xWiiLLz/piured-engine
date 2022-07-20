@@ -16,101 +16,120 @@
  # along with piured-engine.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-"use strict"; // good practice - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
-
-
 
 // This class is responsible for the input of a pad (5 steps)
-import {GameObject} from "../GameObject.js";
-import {TouchPad} from "./TouchPad.js";
-import * as THREE from 'three'
+import { GameObject } from '../GameObject.js';
+import { TouchPad } from './TouchPad.js';
+import * as THREE from 'three';
+import { ResourceManager } from 'src/Resources/ResourceManager.js';
+import { Engine } from 'src/Engine.js';
+import { FrameLog } from '../Sequence/SeqLog/FrameLog.js';
+import { Pad } from './Pad.js';
 
-class TouchInput extends GameObject {
+export class TouchInput extends GameObject {
+    private _mesh;
+    private _scaled_mesh;
 
-    _mesh ;
-    _scaled_mesh ;
-    _noteskin ;
+    pads: TouchPad[] = [];
+    padsDic: Record<string, TouchPad>;
 
-
-    constructor(resourceManager, engine, frameLog, noteskin) {
-
-        super(resourceManager, engine) ;
+    constructor(
+        resourceManager: ResourceManager,
+        engine: Engine,
+        public frameLog: FrameLog,
+        private _noteskin: string
+    ) {
+        super(resourceManager, engine);
 
         // Connect to update lists, so it can be updated every frame and can keep track of key inputs.
-        this.engine.addToTouchDownList(this) ;
-        this.engine.addToTouchUpList(this) ;
+        this.engine.addToTouchDownList(this);
+        this.engine.addToTouchUpList(this);
 
-        this.pads = [] ;
-        this.padsDic = {} ;
+        this.padsDic = {};
         // 15 fingers???
-        this.touchEvents = [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null] ;
+        this.touchEvents = [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+        ];
 
-        this._mesh = new THREE.Object3D() ;
-        this._scaled_mesh = new THREE.Object3D() ;
-        this._scaled_mesh.add(this._mesh) ;
+        this._mesh = new THREE.Object3D();
+        this._scaled_mesh = new THREE.Object3D();
+        this._scaled_mesh.add(this._mesh);
 
-        this.frameLog = frameLog ;
-        this._noteskin = noteskin ;
+        this._noteskin = noteskin;
     }
 
     getPadIds() {
-        return Object.keys(this.padsDic) ;
+        return Object.keys(this.padsDic);
     }
 
-    addTouchPad(padId) {
-        const pad = new TouchPad(this._resourceManager,this.engine, padId, this.frameLog, this._noteskin) ;
+    addTouchPad(padId: string) {
+        const pad = new TouchPad(
+            this._resourceManager,
+            this.engine,
+            padId,
+            this.frameLog,
+            this._noteskin
+        );
         // pad.object.position.z = 0.05;
         // pad.object.position.y = -9;
         pad.object.scale.x = 4.0;
         pad.object.scale.y = 4.0;
 
-        this._mesh.add(pad.object) ;
+        this._mesh.add(pad.object);
 
-        this.pads.push( pad ) ;
-        this.padsDic[padId] = pad ;
+        this.pads.push(pad);
+        this.padsDic[padId] = pad;
 
-        this.adjustTouchPads() ;
+        this.adjustTouchPads();
     }
 
     adjustTouchPads() {
+        let no_pads = this.pads.length;
 
-        let no_pads = this.pads.length ;
-
-        if(no_pads === 1) {
-            return ;
+        if (no_pads === 1) {
+            return;
         }
-        let distance = 8.1 ;
+        let distance = 8.1;
 
-        let Xpos = -(distance*no_pads)/2 + distance/2;
+        let Xpos = -(distance * no_pads) / 2 + distance / 2;
 
-        for (let i = 0 ; i < no_pads ; i++ ) {
-            this.pads[i].object.position.x = Xpos ;
-            Xpos += distance ;
+        for (let i = 0; i < no_pads; i++) {
+            this.pads[i].object.position.x = Xpos;
+            Xpos += distance;
         }
-
     }
 
-    onTouchDown( event ) {
+    onTouchDown(event) {
+        var canvasPosition =
+            this.engine.renderer.domElement.getBoundingClientRect();
 
-        var canvasPosition =this.engine.renderer.domElement.getBoundingClientRect();
-
-        for ( let i = 0 ; i < event.touches.length ; i++) {
-
+        for (let i = 0; i < event.touches.length; i++) {
             let touch = event.touches[i];
 
             if (this.touchEvents[touch.identifier] == null) {
-
                 this.touchEvents[touch.identifier] = touch;
                 var mouseX = touch.pageX - canvasPosition.left;
                 var mouseY = touch.pageY - canvasPosition.top;
 
                 for (let pad of this.pads) {
-
                     let kinds = pad.touchDown(mouseX, mouseY);
 
-                    for (let j = 0 ; j < kinds.length ; j++ ) {
-
-                        const kind = kinds[j] ;
+                    for (let j = 0; j < kinds.length; j++) {
+                        const kind = kinds[j];
 
                         switch (kind) {
                             case 'dl':
@@ -138,26 +157,23 @@ class TouchInput extends GameObject {
                 }
             }
         }
-
     }
 
-    onTouchUp( event ) {
+    onTouchUp(event) {
+        var canvasPosition =
+            this.engine.renderer.domElement.getBoundingClientRect();
 
-        var canvasPosition = this.engine.renderer.domElement.getBoundingClientRect();
-
-        for ( let i = 0 ; i < event.changedTouches.length ; i++) {
-
-            let touch = this.touchEvents[event.changedTouches[i].identifier] ;
-            this.touchEvents[event.changedTouches[i].identifier] = null ;
+        for (let i = 0; i < event.changedTouches.length; i++) {
+            let touch = this.touchEvents[event.changedTouches[i].identifier];
+            this.touchEvents[event.changedTouches[i].identifier] = null;
             var mouseX = touch.pageX - canvasPosition.left;
             var mouseY = touch.pageY - canvasPosition.top;
 
             for (let pad of this.pads) {
-
                 let kinds = pad.touchUp(mouseX, mouseY);
 
-                for (let j = 0 ; j < kinds.length ; j++) {
-                    const kind = kinds[j] ;
+                for (let j = 0; j < kinds.length; j++) {
+                    const kind = kinds[j];
                     switch (kind) {
                         case 'dl':
                             pad.dlKeyHold = false;
@@ -178,62 +194,52 @@ class TouchInput extends GameObject {
                 }
             }
         }
-
     }
 
-    isPressed( kind, padId ) {
-        return this.padsDic[padId].isPressed(kind) ;
+    isPressed(kind, padId: string) {
+        return this.padsDic[padId].isPressed(kind);
     }
 
-    isHeld( kind, padId ) {
-        return this.padsDic[padId].isHeld(kind) ;
+    isHeld(kind, padId: string) {
+        return this.padsDic[padId].isHeld(kind);
     }
 
-    update(delta) {
-
-    }
-
+    update(delta) {}
 
     getPressed() {
+        const list = [];
 
-        var list = [] ;
-
-        for ( let pad of this.pads ) {
-
-            if ( pad.dlKeyPressed ) {
-                list.push(['dl', pad.padId]) ;
+        for (let pad of this.pads) {
+            if (pad.dlKeyPressed) {
+                list.push(['dl', pad.padId]);
             }
 
-            if ( pad.ulKeyPressed ) {
-                list.push(['ul', pad.padId]) ;
+            if (pad.ulKeyPressed) {
+                list.push(['ul', pad.padId]);
             }
 
-            if ( pad.cKeyPressed ) {
-                list.push(['c', pad.padId]) ;
+            if (pad.cKeyPressed) {
+                list.push(['c', pad.padId]);
             }
 
-            if ( pad.urKeyPressed ) {
-                list.push(['ur', pad.padId]) ;
+            if (pad.urKeyPressed) {
+                list.push(['ur', pad.padId]);
             }
 
-            if ( pad.drKeyPressed ) {
-                list.push(['dr', pad.padId]) ;
+            if (pad.drKeyPressed) {
+                list.push(['dr', pad.padId]);
             }
-
         }
 
-        return list ;
+        return list;
     }
 
-    setScale(scale) {
-        this._mesh.scale.x *= scale ;
-        this._mesh.scale.y *= scale ;
+    setScale(scale: number) {
+        this._mesh.scale.x *= scale;
+        this._mesh.scale.y *= scale;
     }
 
-    get object () {
-        return this._scaled_mesh ;
+    get object() {
+        return this._scaled_mesh;
     }
-
 }
-
-export {TouchInput} ;

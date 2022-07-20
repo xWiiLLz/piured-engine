@@ -16,8 +16,8 @@
  # along with piured-engine.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-"use strict"; // good practice - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
 
+import { InputConfig } from './InputConfig';
 
 /**
  * This class holds the configuration for a player.
@@ -39,36 +39,17 @@
  *                      3.0,
  *                      0.15) ;
  */
-class PlayerConfig {
-
-    _inputConfig ;
-    _noteskin ;
-    _level ;
-    _speed ;
-    _accuracyMargin ;
-    _receptorX ;
-    _receptorY ;
-    _scale ;
-
-    constructor(inputConfig,
-                noteskin,
-                level,
-                speed = 1.0,
-                accuracyMargin = 0.15,
-                receptorX = 0,
-                receptorY = 0,
-                scale = 1.0) {
-
-        this._inputConfig = inputConfig ;
-        this._noteskin = noteskin ;
-        this._level = level ;
-        this._speed = speed ;
-        this._accuracyMargin = accuracyMargin ;
-        this._receptorX = receptorX ;
-        this._receptorY = receptorY ;
-        this._scale = scale ;
-
-    }
+export class PlayerConfig {
+    constructor(
+        private _inputConfig: InputConfig,
+        private _noteskin: string,
+        private _level: number,
+        private _speed = 1.0,
+        private _accuracyMargin = 0.15,
+        private _receptorX = 0,
+        private _receptorY = 0,
+        private _scale = 1.0
+    ) {}
 
     get noteskin() {
         return this._noteskin;
@@ -102,5 +83,3 @@ class PlayerConfig {
         return this._scale;
     }
 }
-
-export {PlayerConfig}

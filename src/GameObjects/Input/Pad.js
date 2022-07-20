@@ -16,111 +16,101 @@
  # along with piured-engine.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-"use strict"; // good practice - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
+'use strict'; // good practice - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
 
-
-
-import {GameObject} from "../GameObject.js";
+import { GameObject } from '../GameObject.js';
 
 class Pad extends GameObject {
-
-
-
-
     constructor(resourceManager, engine, keyMap, padId, frameLog) {
-        super(resourceManager, engine) ;
+        super(resourceManager, engine);
         // Key maps
         if (keyMap !== null) {
-            this._dlKey =  keyMap.dl.toLowerCase() ;
-            this._ulKey = keyMap.ul.toLowerCase() ;
-            this._cKey = keyMap.c.toLowerCase() ;
-            this._urKey = keyMap.ur.toLowerCase() ;
-            this._drKey = keyMap.dr.toLowerCase() ;
+            this._dlKey = keyMap.dl.toLowerCase();
+            this._ulKey = keyMap.ul.toLowerCase();
+            this._cKey = keyMap.c.toLowerCase();
+            this._urKey = keyMap.ur.toLowerCase();
+            this._drKey = keyMap.dr.toLowerCase();
         }
 
-        this._dlKeyPressed = false ;
-        this._ulKeyPressed = false ;
-        this._cKeyPressed = false ;
-        this._urKeyPressed = false ;
-        this._drKeyPressed = false ;
+        this._dlKeyPressed = false;
+        this._ulKeyPressed = false;
+        this._cKeyPressed = false;
+        this._urKeyPressed = false;
+        this._drKeyPressed = false;
 
-        this._dlKeyHold = false ;
-        this._ulKeyHold = false ;
-        this._cKeyHold = false ;
-        this._urKeyHold = false ;
-        this._drKeyHold = false ;
+        this._dlKeyHold = false;
+        this._ulKeyHold = false;
+        this._cKeyHold = false;
+        this._urKeyHold = false;
+        this._drKeyHold = false;
 
-        this._padId = padId ;
+        this._padId = padId;
 
-        this.frameLog = frameLog ;
-
+        this.frameLog = frameLog;
     }
 
-    isPressed(kind) {
+    isPressed(kind: string) {
         switch (kind) {
             case 'dl':
-                return  this.dlKeyPressed ;
-                break ;
+                return this.dlKeyPressed;
+                break;
             case 'ul':
-                return  this.ulKeyPressed ;
-                break ;
+                return this.ulKeyPressed;
+                break;
             case 'c':
-                return  this.cKeyPressed ;
-                break ;
+                return this.cKeyPressed;
+                break;
             case 'ur':
-                return  this.urKeyPressed ;
-                break ;
+                return this.urKeyPressed;
+                break;
             case 'dr':
-                return  this.drKeyPressed ;
-                break ;
+                return this.drKeyPressed;
+                break;
         }
     }
 
     isHeld(kind) {
         switch (kind) {
             case 'dl':
-                return  this.dlKeyHold ;
-                break ;
+                return this.dlKeyHold;
+                break;
             case 'ul':
-                return  this.ulKeyHold ;
-                break ;
+                return this.ulKeyHold;
+                break;
             case 'c':
-                return  this.cKeyHold ;
-                break ;
+                return this.cKeyHold;
+                break;
             case 'ur':
-                return  this.urKeyHold ;
-                break ;
+                return this.urKeyHold;
+                break;
             case 'dr':
-                return  this.drKeyHold ;
-                break ;
+                return this.drKeyHold;
+                break;
         }
     }
 
-    ready() {
-
-    }
-
+    ready() {}
 
     update(delta) {
         // to avoid login every time
-        if ( this.dlKeyPressed !== false ) {
-            this.dlKeyPressed = false ;
+        if (this.dlKeyPressed !== false) {
+            this.dlKeyPressed = false;
         }
 
-        if (this.ulKeyPressed !== false ) {
-            this.ulKeyPressed = false ;
+        if (this.ulKeyPressed !== false) {
+            this.ulKeyPressed = false;
         }
 
         if (this.cKeyPressed !== false) {
-            this.cKeyPressed = false ;
+            this.cKeyPressed = false;
         }
 
         if (this.urKeyPressed !== false) {
-            this.urKeyPressed = false ;
+            this.urKeyPressed = false;
         }
 
         if (this.drKeyPressed !== false) {
-            this.drKeyPressed = false ;
+            this.drKeyPressed = false;
         }
     }
 
@@ -133,7 +123,6 @@ class Pad extends GameObject {
     }
 
     get dlKey() {
-
         return this._dlKey;
     }
 
@@ -178,8 +167,8 @@ class Pad extends GameObject {
     }
 
     set dlKeyPressed(value) {
-        if ( value === true ) {
-            this.frameLog.logPadInput('dl',this._padId,'pressed',value) ;
+        if (value === true) {
+            this.frameLog.logPadInput('dl', this._padId, 'pressed', value);
         }
         this._dlKeyPressed = value;
     }
@@ -189,7 +178,7 @@ class Pad extends GameObject {
     }
 
     set ulKeyPressed(value) {
-        if ( value === true ) {
+        if (value === true) {
             this.frameLog.logPadInput('ul', this._padId, 'pressed', value);
         }
         this._ulKeyPressed = value;
@@ -200,7 +189,7 @@ class Pad extends GameObject {
     }
 
     set cKeyPressed(value) {
-        if ( value === true ) {
+        if (value === true) {
             this.frameLog.logPadInput('c', this._padId, 'pressed', value);
         }
         this._cKeyPressed = value;
@@ -211,7 +200,7 @@ class Pad extends GameObject {
     }
 
     set urKeyPressed(value) {
-        if ( value === true ) {
+        if (value === true) {
             this.frameLog.logPadInput('ur', this._padId, 'pressed', value);
         }
         this._urKeyPressed = value;
@@ -222,7 +211,7 @@ class Pad extends GameObject {
     }
 
     set drKeyPressed(value) {
-        if ( value === true ) {
+        if (value === true) {
             this.frameLog.logPadInput('dr', this._padId, 'pressed', value);
         }
         this._drKeyPressed = value;
@@ -233,7 +222,7 @@ class Pad extends GameObject {
     }
 
     set dlKeyHold(value) {
-        this.frameLog.logPadInput('dl',this._padId,'hold',value) ;
+        this.frameLog.logPadInput('dl', this._padId, 'hold', value);
         this._dlKeyHold = value;
     }
 
@@ -242,7 +231,7 @@ class Pad extends GameObject {
     }
 
     set ulKeyHold(value) {
-        this.frameLog.logPadInput('ul',this._padId,'hold',value) ;
+        this.frameLog.logPadInput('ul', this._padId, 'hold', value);
         this._ulKeyHold = value;
     }
 
@@ -251,7 +240,7 @@ class Pad extends GameObject {
     }
 
     set cKeyHold(value) {
-        this.frameLog.logPadInput('c',this._padId,'hold',value) ;
+        this.frameLog.logPadInput('c', this._padId, 'hold', value);
         this._cKeyHold = value;
     }
 
@@ -260,7 +249,7 @@ class Pad extends GameObject {
     }
 
     set urKeyHold(value) {
-        this.frameLog.logPadInput('ur',this._padId,'hold',value) ;
+        this.frameLog.logPadInput('ur', this._padId, 'hold', value);
         this._urKeyHold = value;
     }
 
@@ -269,12 +258,9 @@ class Pad extends GameObject {
     }
 
     set drKeyHold(value) {
-        this.frameLog.logPadInput('dr',this._padId,'hold',value) ;
+        this.frameLog.logPadInput('dr', this._padId, 'hold', value);
         this._drKeyHold = value;
     }
-
-
-
 }
 
-export {Pad} ;
+export { Pad };

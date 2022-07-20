@@ -16,8 +16,10 @@
  # along with piured-engine.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-"use strict"; // good practice - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
+'use strict';
+import { InputConfig } from './InputConfig';
 
+// good practice - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
 
 /**
  * Class for configuring the input for a touch-capable device. The input pad will be drawn on the screen.
@@ -30,19 +32,10 @@
  *
  * let p1InputConfig = new TouchInputConfig() ;
  */
-class TouchInputConfig {
-
-    _scale ;
-    _X ;
-    _Y ;
-    constructor(scale=1.0, X=0, Y=0) {
-
-        this._scale = scale ;
-        this._X = X ;
-        this._Y = Y ;
-
+export class TouchInputConfig extends InputConfig {
+    constructor(private _scale = 1.0, private _X = 0, private _Y = 0) {
+        super();
     }
-
 
     get scale() {
         return this._scale;
@@ -56,5 +49,3 @@ class TouchInputConfig {
         return this._Y;
     }
 }
-
-export {TouchInputConfig}

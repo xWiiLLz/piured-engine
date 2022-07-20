@@ -1,5 +1,4 @@
-"use strict"; // good practice - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
-
+'use strict'; // good practice - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
 
 /*
  * # Copyright (C) Pedro G. Bascoy
@@ -20,13 +19,18 @@
  *
  */
 
-
-import {Song} from "./Song/Song.js";
-import {ResourceManager} from "./Resources/ResourceManager.js";
-import {Stage} from "./GameObjects/Stage/Stage.js";
-import {RemoteInput} from "./Config/RemoteInput.js";
-import * as THREE from 'three'
-import {TWEEN} from "../lib/tween.min.js";
+import { Song } from './Song/Song.js';
+import { ResourceManager } from './Resources/ResourceManager.js';
+import { Stage } from './GameObjects/Stage/Stage.js';
+import { RemoteInput } from './Config/RemoteInput.js';
+import * as THREE from 'three';
+import TWEEN, { Tween } from '@tweenjs/tween.js';
+import { StageConfig } from './Config/StageConfig.js';
+import { Scene } from 'three';
+import { PlayerConfig } from './Config/PlayerConfig.js';
+import { GameObject } from './GameObjects/GameObject.js';
+import { KeyInput } from './GameObjects/Input/KeyInput.js';
+import { TouchInput } from './GameObjects/Input/TouchInput.js';
 
 /**
  * PIURED is a Pump It Up stage simulator that works directly in your browser.
@@ -170,34 +174,38 @@ import {TWEEN} from "../lib/tween.min.js";
  */
 
 class Engine {
+    private _updateList = [];
+    private _inputList = [];
+    private _onKeyDownList: KeyInput[] = [];
+    private _onKeyUpList = [];
+    private _onTouchDownList: TouchInput = [];
+    private _onTouchUpList = [];
+    private _inputFrameLogList = [];
+    private _id?: string;
 
-    _updateList = [] ;
-    _inputList = [] ;
-    _onKeyDownList = [] ;
-    _onKeyUpList = [] ;
-    _onTouchDownList = [] ;
-    _onTouchUpList = [] ;
-    _inputFrameLogList = [] ;
-    _id ;
-    song ;
-    stage ;
-    scene ;
-    clock ;
-    camera ;
-    renderer ;
-    _playBackTween = undefined ;
-    _playBackVal = 1.0 ;
-    _playBackUser = 1.0 ;
-    _onStageCleared = undefined ;
-    _onFrameLog = undefined ;
-    _playBackSpeedEnabled = true ;
+    private _playBackTween?: Tween<this> = undefined;
 
-    containerId ;
+    private _playBackVal = 1.0;
 
-    //public
+    private _playBackUser = 1.0;
 
-    constructor() {
-    }
+    private _onStageCleared = undefined;
+
+    private _onFrameLog = undefined;
+
+    private _playBackSpeedEnabled = true;
+
+    song?: Song;
+    stage?: Stage;
+    scene?: Scene;
+    clock;
+    camera;
+    renderer;
+
+    containerId;
+    window?: Window;
+    resourcePath: string;
+    playBackSpeed: any;
 
     /**
      * Configures the renderer and sets the camera into position. Call this method before setting up the stage through {@link Engine#configureStage}.
@@ -210,26 +218,25 @@ class Engine {
      *
      * engine.init( 1270, 768, window.devicePixelRatio, window )
      */
-    init(
-         width,
-         height,
-         pixelRatio,
-         window
-         ) {
-
-        this.window = window
+    public init(
+        width: number,
+        height: number,
+        pixelRatio: number,
+        window: Window
+    ) {
+        this.window = window;
         this.clock = new THREE.Clock();
 
         // For grading the window is fixed in size; here's general code:
-        var canvasWidth = width;
-        var canvasHeight = height;
-        var canvasRatio = canvasWidth / canvasHeight;
+        const canvasWidth = width;
+        const canvasHeight = height;
+        const canvasRatio = canvasWidth / canvasHeight;
         // scene
         this.scene = new THREE.Scene();
 
         // Camera: Y up, X right, Z up
 
-        this.camera = new THREE.PerspectiveCamera( 45, canvasRatio, 1, 4000 ) ;
+        this.camera = new THREE.PerspectiveCamera(45, canvasRatio, 1, 4000);
 
         //camera = new THREE.OrthographicCamera(windowWidth/-2, windowWidth/2, windowHeight/2, windowHeight/-2, 0, 40);
 
@@ -241,20 +248,20 @@ class Engine {
         // This way, the X axis increases to the right, the Z axis increases to the bottom, and the Y axis in pointing directly
         // towards the camera.
 
+        this.camera.up = new THREE.Vector3(0, 1, 0);
 
-        this.camera.up = new THREE.Vector3(0,1,0) ;
-
-
-        this.renderer = new THREE.WebGLRenderer({ antialias: false, preserveDrawingBuffer: false});
+        this.renderer = new THREE.WebGLRenderer({
+            antialias: false,
+            preserveDrawingBuffer: false,
+        });
         this.renderer.outputEncoding = THREE.sRGBEncoding;
         this.renderer.gammaInput = true;
 
         this.renderer.gammaOutput = true;
         // Important for HiDPI devices.
 
-
-        this.renderer.setPixelRatio( pixelRatio );
-        this.renderer.setSize( canvasWidth, canvasHeight );
+        this.renderer.setPixelRatio(pixelRatio);
+        this.renderer.setSize(canvasWidth, canvasHeight);
         // this.renderer.setClearColor(new THREE.Color(0xffffff));
         this.renderer.autoClear = false;
         this.renderer.clear();
@@ -266,7 +273,6 @@ class Engine {
         // document.body.appendChild( this.stats.domElement );
 
         // document.addEventListener( 'mousedown', this.onDocumentMouseDown.bind(this), false );
-
     }
 
     /**
@@ -280,16 +286,32 @@ class Engine {
      * let stageConfig = new StageConfig( ... ) ;
      * engine.configureStage(stageConfig) ;
      */
-    async configureStage( stageConfig ) {
-
-        this.resourcePath = stageConfig.resourcePath ;
-        this.playBackSpeed = stageConfig.playBackSpeed ;
-        this.song = new Song(this, stageConfig.SSCFile, stageConfig.audioFile, stageConfig.offset, stageConfig.playBackSpeed, stageConfig.onReadyToStart);
-        await this.song.initSSC()
-        let resourceManager = new ResourceManager(this.renderer, stageConfig.resourcePath, 'noteskins/', stageConfig.noteskins, 'stage_UHD') ;
-        this.stage = new Stage(resourceManager, this, this.song, stageConfig.noteskins) ;
-        this.scene.add(this.stage.object) ;
-
+    async configureStage(stageConfig: StageConfig) {
+        this.resourcePath = stageConfig.resourcePath;
+        this.playBackSpeed = stageConfig.playBackSpeed;
+        this.song = new Song(
+            this,
+            stageConfig.SSCFile,
+            stageConfig.audioFile,
+            stageConfig.offset,
+            stageConfig.playBackSpeed,
+            stageConfig.onReadyToStart
+        );
+        await this.song.initSSC();
+        const resourceManager = new ResourceManager(
+            this.renderer,
+            stageConfig.resourcePath,
+            'noteskins/',
+            stageConfig.noteskins,
+            'stage_UHD'
+        );
+        this.stage = new Stage(
+            resourceManager,
+            this,
+            this.song,
+            stageConfig.noteskins
+        );
+        this.scene?.add?.(this.stage.object);
     }
 
     /**
@@ -303,13 +325,12 @@ class Engine {
      * let p1Config = new PlayerConfig( ... ) ;
      * let p1Id = engine.addPlayer(p1Config) ;
      */
-    addPlayer( playerConfig ) {
-
+    addPlayer(playerConfig: PlayerConfig) {
         if (playerConfig.inputConfig instanceof RemoteInput) {
-            this._playBackSpeedEnabled = false ;
+            this._playBackSpeedEnabled = false;
         }
 
-        return this.stage.addPlayerStage( playerConfig, this.playBackSpeed ) ;
+        return this.stage?.addPlayerStage?.(playerConfig, this.playBackSpeed);
     }
 
     /**
@@ -321,12 +342,13 @@ class Engine {
      * @example <caption> Granted we have defined in a HTML document the following container `<div id="container"></div>`, we add the engine to the DOM</caption>
      * engine.addToDOM('container') ;
      */
-    addToDOM(containerId) {
-        this.containerId = containerId ;
-        let container = document.getElementById( containerId );
-        container.appendChild( this.renderer.domElement );
+    addToDOM(containerId: string) {
+        this.containerId = containerId;
+        const container = document.getElementById(containerId);
+        if (container) {
+            container.appendChild(this.renderer.domElement);
+        }
     }
-
 
     /**
      * Updates the player's stage `playerId` offset. This function can be used to sync off-beat steps on-the-fly when the
@@ -338,10 +360,8 @@ class Engine {
      * @example <caption> Updating the offset by 0.01 seconds for player with id `p1Id := 0`.</caption>
      * engine.updateOffset(p1Id, 0.01) ;
      */
-    updateOffset(playerId, newOffsetOffset) {
-
-        this.stage.updateOffset(playerId, newOffsetOffset) ;
-
+    updateOffset(playerId: number, newOffsetOffset: number) {
+        this.stage?.updateOffset?.(playerId, newOffsetOffset);
     }
 
     /**
@@ -357,26 +377,27 @@ class Engine {
      * // Essentially stops the playback
      * engine.tunePlayBackSpeed(0.0) ;
      */
-    tunePlayBackSpeed ( playBackSpeed ) {
+    tunePlayBackSpeed(playBackSpeed: number) {
         if (this._playBackSpeedEnabled && playBackSpeed >= 0.0) {
-            this._playBackUser = playBackSpeed ;
-            this._playBackVal = playBackSpeed ;
+            this._playBackUser = playBackSpeed;
+            this._playBackVal = playBackSpeed;
         }
     }
 
-    tweenPlayBackSpeed(pb) {
+    tweenPlayBackSpeed(pb: number) {
         if (pb < 0) {
-            pb = 0 ;
+            pb = 0;
         }
-        const time = 500 ;
-        if ( this._playBackTween !== undefined ) {
-            TWEEN.remove( this._playBackTween ) ;
+        const time = 500;
+        if (this._playBackTween !== undefined) {
+            TWEEN.remove(this._playBackTween);
         }
-        const playBackUser = this._playBackUser ;
-        this._playBackTween = new TWEEN.Tween( this ).to( { _playBackVal: playBackUser }, time ).delay(time).start();
-        new TWEEN.Tween( this ).to( { _playBackVal: pb }, time ).start();
-
-
+        const playBackUser = this._playBackUser;
+        this._playBackTween = new TWEEN.Tween(this)
+            .to({ _playBackVal: playBackUser }, time)
+            .delay(time)
+            .start();
+        new TWEEN.Tween(this).to({ _playBackVal: pb }, time).start();
     }
 
     /**
@@ -387,9 +408,9 @@ class Engine {
      * @example <caption> Configuring the browser to log the key strokes into the engine</caption>
      * window.onkeydown = engine.keyDown ;
      */
-    keyDown(event) {
-        for (let i = 0 ; i < this._onKeyDownList.length ; i++ ) {
-            this._onKeyDownList[i].onKeyDown(event) ;
+    keyDown(event: KeyboardEvent) {
+        for (const keyInput of this._onKeyDownList) {
+            keyInput.onKeyDown(event);
         }
     }
     /**
@@ -400,9 +421,9 @@ class Engine {
      * @example <caption> Configuring the browser to log the key strokes into the engine</caption>
      * window.onkeyup = engine.keyUp ;
      */
-    keyUp(event) {
-        for (let i = 0 ; i < this._onKeyUpList.length ; i++ ) {
-            this._onKeyUpList[i].onKeyUp(event) ;
+    keyUp(event: KeyboardEvent) {
+        for (const keyInput of this._onKeyDownList) {
+            keyInput.onKeyUp(event);
         }
     }
 
@@ -420,9 +441,9 @@ class Engine {
      *     engine.touchDown(event) ;
      * }, false );
      */
-    touchDown(event) {
-        for (let i = 0 ; i < this._onTouchDownList.length ; i++ ) {
-            this._onTouchDownList[i].onTouchDown(event) ;
+    touchDown(event: TouchEvent) {
+        for (let i = 0; i < this._onTouchDownList.length; i++) {
+            this._onTouchDownList[i].onTouchDown(event);
         }
     }
     /**
@@ -440,8 +461,8 @@ class Engine {
      * }, false );
      */
     touchUp(event) {
-        for (let i = 0 ; i < this._onTouchUpList.length ; i++ ) {
-            this._onTouchUpList[i].onTouchUp(event) ;
+        for (let i = 0; i < this._onTouchUpList.length; i++) {
+            this._onTouchUpList[i].onTouchUp(event);
         }
     }
 
@@ -455,7 +476,7 @@ class Engine {
      * @example <caption> Moving the camera backwards to fully show players' stages when both are playing `pump-double` styles </caption>
      * engine.setCameraPosition(0,-3.4,12) ;
      */
-    setCameraPosition( X,Y,Z ) {
+    setCameraPosition(X, Y, Z) {
         this.camera.position.x = X;
         this.camera.position.y = Y;
         this.camera.position.z = Z;
@@ -474,10 +495,8 @@ class Engine {
      * }
      */
     queryStageType(level) {
-        return this.song.getLevelStyle(level) ;
+        return this.song.getLevelStyle(level);
     }
-
-
 
     /**
      * Sets the engine into a valid state and prepares it to start the song playback. Call this function once the stage
@@ -487,9 +506,9 @@ class Engine {
      * @example <caption> Starting the engine </caption>
      * engine.start() ;
      */
-    start ( ) {
-        this.performReady() ;
-        this.song.play() ;
+    start() {
+        this.performReady();
+        this.song.play();
     }
     /**
      * Schedules when the engine should start playing the song and starts the rendering main loop.
@@ -508,8 +527,13 @@ class Engine {
      * }
      *
      */
-    startPlayBack( dateToStart, getDateFn = () => { return new Date() ; } ) {
-        this.song.startPlayBack(dateToStart, getDateFn) ;
+    startPlayBack(
+        dateToStart,
+        getDateFn = () => {
+            return new Date();
+        }
+    ) {
+        this.song.startPlayBack(dateToStart, getDateFn);
         this.animate();
     }
 
@@ -518,18 +542,16 @@ class Engine {
      * must not be used again. This method is called automatically once the song has reached its end.
      * @returns {undefined}
      */
-    stop ( ) {
+    stop() {
+        this.removeFromDOM();
 
-        this.removeFromDOM() ;
+        this.freeEngineResources();
 
-        this.freeEngineResources() ;
+        const performances = this.stage.retrievePerformancePlayerStages();
 
-        let performances = this.stage.retrievePerformancePlayerStages() ;
-
-        if (this._onStageCleared !== undefined ) {
-            this._onStageCleared( performances ) ;
+        if (this._onStageCleared !== undefined) {
+            this._onStageCleared(performances);
         }
-
     }
 
     /**
@@ -540,12 +562,10 @@ class Engine {
      * @example <caption> Resize drawable canvas to 500x500 px </caption>
      * engine.resize(500, 500)
      */
-    resize (newWidth, newHeight ) {
-
-        this.camera.aspect = newWidth / newHeight ;
+    resize(newWidth, newHeight) {
+        this.camera.aspect = newWidth / newHeight;
         this.camera.updateProjectionMatrix();
-        this.renderer.setSize( newWidth, newHeight) ;
-
+        this.renderer.setSize(newWidth, newHeight);
     }
 
     /**
@@ -560,9 +580,8 @@ class Engine {
      * engine.logFrame(JSON) ;
      */
     logFrame(frameLog) {
-        this._inputFrameLogList.push(frameLog) ;
+        this._inputFrameLogList.push(frameLog);
     }
-
 
     /**
      * Sets the callback function `onFrameLog`. This function is called once the engine has a frame to be logged from any
@@ -578,7 +597,7 @@ class Engine {
      * }
      */
     set onFrameLog(value) {
-        this._onFrameLog = value ;
+        this._onFrameLog = value;
     }
 
     /**
@@ -593,64 +612,73 @@ class Engine {
      * }
      */
     set onStageCleared(value) {
-        this._onStageCleared = value ;
+        this._onStageCleared = value;
     }
-
-
-
 
     //private
 
     performReady() {
-        for (var i = 0 ; i < this._updateList.length ; i++ ) {
-            this._updateList[i].ready() ;
+        for (let i = 0; i < this._updateList.length; i++) {
+            this._updateList[i].ready();
         }
     }
 
     showGrids() {
         // Background grid and axes. Grid step size is 1, axes cross at 0, 0
-        Coordinates.drawGrid({size:100,scale:1,orientation:"z", scene: this.scene});
-        Coordinates.drawAxes({axisLength:11,axisOrientation:"x",axisRadius:0.04});
-        Coordinates.drawAxes({axisLength:11,axisOrientation:"z",axisRadius:0.04});
+        Coordinates.drawGrid({
+            size: 100,
+            scale: 1,
+            orientation: 'z',
+            scene: this.scene,
+        });
+        Coordinates.drawAxes({
+            axisLength: 11,
+            axisOrientation: 'x',
+            axisRadius: 0.04,
+        });
+        Coordinates.drawAxes({
+            axisLength: 11,
+            axisOrientation: 'z',
+            axisRadius: 0.04,
+        });
     }
 
-
     addToUpdateList(gameObject) {
-        this._updateList.push(gameObject) ;
+        this._updateList.push(gameObject);
     }
 
     addToInputList(gameObject) {
-        this._inputList.push(gameObject) ;
+        this._inputList.push(gameObject);
     }
 
     addToKeyUpList(gameObject) {
-        this._onKeyUpList.push(gameObject) ;
+        this._onKeyUpList.push(gameObject);
     }
 
-    addToKeyDownList(gameObject) {
-        this._onKeyDownList.push(gameObject) ;
+    addToKeyDownList(keyInput: KeyInput) {
+        this._onKeyDownList.push(keyInput);
     }
 
     addToTouchUpList(gameObject) {
-        this._onTouchUpList.push(gameObject) ;
+        this._onTouchUpList.push(gameObject);
     }
 
     addToTouchDownList(gameObject) {
-        this._onTouchDownList.push(gameObject) ;
+        this._onTouchDownList.push(gameObject);
     }
 
     getOutputFrameLogList() {
-        return this._outputFrameLogList ;
+        return this._outputFrameLogList;
     }
-    clearOutputFrameLoglist(){
-        this._outputFrameLogList = []
+    clearOutputFrameLoglist() {
+        this._outputFrameLogList = [];
     }
 
     addToOutputFrameLogList(frameLog) {
-        if (this._onFrameLog !== undefined ) {
+        if (this._onFrameLog !== undefined) {
             this._onFrameLog({
-                'playerStageId': frameLog.playerStageId ,
-                'json': frameLog.json
+                playerStageId: frameLog.playerStageId,
+                json: frameLog.json,
             });
         }
         // this._inputFrameLogList.push({
@@ -659,10 +687,8 @@ class Engine {
         // }) ;
     }
 
-
-
     createStats() {
-        var stats = new Stats();
+        const stats = new Stats();
         stats.setMode(0);
         stats.domElement.style.position = 'absolute';
         stats.domElement.style.left = '0';
@@ -671,91 +697,86 @@ class Engine {
     }
 
     removeFromDOM() {
-        let container = document.getElementById( this.containerId );
-        container.removeChild( this.renderer.domElement );
+        const container = document.getElementById(this.containerId);
+        container.removeChild(this.renderer.domElement);
     }
 
     setAllCulled(obj, culled) {
         obj.frustumCulled = culled;
-        obj.children.forEach(child => this.setAllCulled(child, culled));
+        obj.children.forEach((child) => this.setAllCulled(child, culled));
     }
-
-
 
     animate() {
         //Note that .bind(this) is important so it doesnt lose the local context.
         this._id = this.window.requestAnimationFrame(this.animate.bind(this));
         // this._id = this.frameRequester(this.animate.bind(this))
         this.render();
-
     }
 
     freeEngineResources() {
+        cancelAnimationFrame(this._id);
 
-        cancelAnimationFrame(this._id) ;
+        this.renderer.dispose();
 
-        this.renderer.dispose() ;
-
-
-        const cleanMaterial = material => {
-            material.dispose() ;
+        const cleanMaterial = (material) => {
+            material.dispose();
 
             // dispose textures
             for (const key of Object.keys(material)) {
-                const value = material[key]
-                if (value && typeof value === 'object' && 'minFilter' in value) {
-                    value.dispose()
+                const value = material[key];
+                if (
+                    value &&
+                    typeof value === 'object' &&
+                    'minFilter' in value
+                ) {
+                    value.dispose();
                 }
             }
-        }
+        };
 
-        this.scene.traverse(object => {
-            if (!object.isMesh) return
-            object.geometry.dispose()
+        this.scene.traverse((object) => {
+            if (!object.isMesh) return;
+            object.geometry.dispose();
 
             if (object.material.isMaterial) {
-                cleanMaterial(object.material)
+                cleanMaterial(object.material);
             } else {
                 // an array of materials
-                for (const material of object.material) cleanMaterial(material)
+                for (const material of object.material) cleanMaterial(material);
             }
-        })
+        });
     }
 
     render() {
-
         // It is the amount of time since last call to render.
         const delta = this.clock.getDelta();
 
         //remote frames
-        for (var i = 0 ; i < this._inputFrameLogList.length; i++) {
-            let flog = this._inputFrameLogList[i] ;
-            this.stage.logFrame(flog.playerStageId, flog.json) ;
+        for (var i = 0; i < this._inputFrameLogList.length; i++) {
+            const flog = this._inputFrameLogList[i];
+            this.stage.logFrame(flog.playerStageId, flog.json);
         }
-        this._inputFrameLogList = [] ;
-
+        this._inputFrameLogList = [];
 
         // process input
-        for (var i = 0 ; i < this._inputList.length ; i++ ) {
-            this._inputList[i].input() ;
+        for (var i = 0; i < this._inputList.length; i++) {
+            this._inputList[i].input();
         }
 
         // Update gameObjects
-        for (var i = 0 ; i < this._updateList.length ; i++ ) {
-            this._updateList[i].update(delta) ;
+        for (var i = 0; i < this._updateList.length; i++) {
+            this._updateList[i].update(delta);
         }
 
         // update tweens
         TWEEN.update();
 
-        this.song.setNewPlayBackSpeed( this._playBackVal ) ;
-        this.stage.setNewPlayBackSpeed( this._playBackVal ) ;
+        this.song.setNewPlayBackSpeed(this._playBackVal);
+        this.stage.setNewPlayBackSpeed(this._playBackVal);
 
         // this.cameraControls.update(delta);
         this.renderer.render(this.scene, this.camera);
         // this.stats.update();
     }
-
-
 }
-export {Engine} ;
+export { Engine };

@@ -1,36 +1,45 @@
 {
-  "name": "@piured/engine",
-  "version": "0.1.0",
-  "description": "A web-based Pump It Up engine",
-  "main": "index.js",
-  "type": "module",
-  "directories": {
-    "doc": "docs",
-    "lib": "lib"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rimraf dist && npm run tsc",
-    "tsc": "tsc"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/piulin/piured-engine.git"
-  },
-  "author": "",
-  "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/piulin/piured-engine/issues"
-  },
-  "dependencies": {
-    "@tweenjs/tween.js": "^18.6.4",
-    "ssc-parser": "^0.0.2",
-    "three": "0.128.0"
-  },
-  "homepage": "https://github.com/piulin/piured-engine#readme",
-  "devDependencies": {
-    "@types/three": "^0.142.0",
-    "rimraf": "^3.0.2",
-    "typescript": "^4.7.4"
-  }
+    "name": "@piured/engine",
+    "version": "0.1.0",
+    "description": "A web-based Pump It Up engine",
+    "main": "index.js",
+    "type": "module",
+    "directories": {
+        "doc": "docs",
+        "lib": "lib"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "rimraf dist && npm run tsc",
+        "tsc": "tsc",
+        "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
+        "lint": "eslint . --ext .ts",
+        "lint:fix": "npm run lint -- --fix"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/piulin/piured-engine.git"
+    },
+    "author": "",
+    "license": "GPL-3.0",
+    "bugs": {
+        "url": "https://github.com/piulin/piured-engine/issues"
+    },
+    "dependencies": {
+        "@tweenjs/tween.js": "^18.6.4",
+        "ssc-parser": "^0.0.2",
+        "three": "0.128.0"
+    },
+    "homepage": "https://github.com/piulin/piured-engine#readme",
+    "devDependencies": {
+        "@types/three": "^0.142.0",
+        "@typescript-eslint/eslint-plugin": "^5.30.7",
+        "@typescript-eslint/parser": "^5.30.7",
+        "eslint": "^8.20.0",
+        "eslint-config-prettier": "^8.5.0",
+        "eslint-plugin-prettier": "^4.2.1",
+        "prettier": "^2.7.1",
+        "rimraf": "^3.0.2",
+        "typescript": "^4.7.4"
+    }
 }

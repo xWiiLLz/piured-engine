@@ -5,3 +5,4 @@ docs/assets/*
 docs/index.html
 node_modules/*
 test/*
+dist/*
