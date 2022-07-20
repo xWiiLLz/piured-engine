@@ -18,13 +18,13 @@
  */
 
 import readFileContent from '../Utils/FileReader.js';
-import { parseSSC } from 'ssc-parser';
+import { Level, Meta, parseSSC } from 'ssc-parser';
 import * as THREE from 'three';
 import { Engine } from 'src/Engine.js';
 
 export class Song {
-    meta: Record<string, string> = {};
-    levels: Record<string, string>[] = [];
+    meta!: Meta;
+    levels: Level[] = [];
     requiresResync = false;
     readyToStart = false;
     syncTime: number;
@@ -61,12 +61,12 @@ export class Song {
     }
 
     getLevelDifficulty(levelIndex: number) {
-        return parseInt(this.levels[levelIndex].METER) === undefined
+        return Number.isNaN(parseInt(this.levels[levelIndex].METER as any))
             ? 1
-            : parseInt(this.levels[levelIndex].METER);
+            : this.levels[levelIndex].METER;
     }
 
-    getBMPs(levelIndex: number) {
+    getBPMs(levelIndex: number) {
         if ('BPMS' in this.levels[levelIndex]) {
             return this.levels[levelIndex].BPMS;
         } else {
@@ -111,11 +111,11 @@ export class Song {
         if ('DELAYS' in this.levels[levelIndex]) {
             arr = this.levels[levelIndex].DELAYS;
         } else if ('DELAYS' in this.meta) {
-            arr = this.meta['DELAYS'];
+            arr = this.meta.DELAYS;
         } else {
             return [];
         }
-        return arr;
+        return arr !== '' && !!arr ? arr : [];
     }
 
     getSpeeds(levelIndex: number) {
@@ -160,7 +160,7 @@ export class Song {
     }
 
     getBPMAtBeat(levelIndex: number, beat: number) {
-        const tickCounts = this.getBMPs(levelIndex);
+        const tickCounts = this.getBPMs(levelIndex);
         let last = tickCounts[0][1];
         for (const tickCount of tickCounts) {
             const beatInTick = +tickCount[0];
