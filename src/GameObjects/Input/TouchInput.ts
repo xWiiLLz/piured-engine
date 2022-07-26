@@ -18,17 +18,18 @@
  */
 
 // This class is responsible for the input of a pad (5 steps)
-import { GameObject } from '../GameObject.js';
-import { TouchPad } from './TouchPad.js';
+import { GameObject } from '../GameObject';
+import { TouchPad } from './TouchPad';
 import * as THREE from 'three';
-import { ResourceManager } from 'src/Resources/ResourceManager.js';
-import { Engine } from 'src/Engine.js';
-import { FrameLog } from '../Sequence/SeqLog/FrameLog.js';
-import { Pad } from './Pad.js';
+import { ResourceManager } from 'src/Resources/ResourceManager';
+import { Engine } from 'src/Engine';
+import { FrameLog } from '../Sequence/SeqLog/FrameLog';
+import { Pad } from './Pad';
 
 export class TouchInput extends GameObject {
     private _mesh;
     private _scaled_mesh;
+    private touchEvents: (Touch | null)[];
 
     pads: TouchPad[] = [];
     padsDic: Record<string, TouchPad>;
@@ -68,8 +69,6 @@ export class TouchInput extends GameObject {
         this._mesh = new THREE.Object3D();
         this._scaled_mesh = new THREE.Object3D();
         this._scaled_mesh.add(this._mesh);
-
-        this._noteskin = noteskin;
     }
 
     getPadIds() {
@@ -98,61 +97,59 @@ export class TouchInput extends GameObject {
     }
 
     adjustTouchPads() {
-        let no_pads = this.pads.length;
+        const no_pads = this.pads.length;
 
         if (no_pads === 1) {
             return;
         }
-        let distance = 8.1;
+        const distance = 8.1;
 
         let Xpos = -(distance * no_pads) / 2 + distance / 2;
 
-        for (let i = 0; i < no_pads; i++) {
-            this.pads[i].object.position.x = Xpos;
+        for (const pad of this.pads) {
+            pad.object.position.x = Xpos;
             Xpos += distance;
         }
     }
 
-    onTouchDown(event) {
-        var canvasPosition =
-            this.engine.renderer.domElement.getBoundingClientRect();
+    onTouchDown(event: TouchEvent) {
+        const canvasPosition =
+            this.engine.renderer?.domElement.getBoundingClientRect();
+        if (!canvasPosition) return;
 
         for (let i = 0; i < event.touches.length; i++) {
-            let touch = event.touches[i];
+            const touch = event.touches[i];
 
-            if (this.touchEvents[touch.identifier] == null) {
-                this.touchEvents[touch.identifier] = touch;
-                var mouseX = touch.pageX - canvasPosition.left;
-                var mouseY = touch.pageY - canvasPosition.top;
+            if (this.touchEvents[touch.identifier] === null) continue;
+            this.touchEvents[touch.identifier] = touch;
+            const mouseX = touch.pageX - canvasPosition.left;
+            const mouseY = touch.pageY - canvasPosition.top;
 
-                for (let pad of this.pads) {
-                    let kinds = pad.touchDown(mouseX, mouseY);
+            for (const pad of this.pads) {
+                const kinds = pad.touchDown(mouseX, mouseY);
 
-                    for (let j = 0; j < kinds.length; j++) {
-                        const kind = kinds[j];
-
-                        switch (kind) {
-                            case 'dl':
-                                pad.dlKeyPressed = true;
-                                pad.dlKeyHold = true;
-                                break;
-                            case 'ul':
-                                pad.ulKeyPressed = true;
-                                pad.ulKeyHold = true;
-                                break;
-                            case 'c':
-                                pad.cKeyPressed = true;
-                                pad.cKeyHold = true;
-                                break;
-                            case 'ur':
-                                pad.urKeyPressed = true;
-                                pad.urKeyHold = true;
-                                break;
-                            case 'dr':
-                                pad.drKeyPressed = true;
-                                pad.drKeyHold = true;
-                                break;
-                        }
+                for (const kind of kinds) {
+                    switch (kind) {
+                        case 'dl':
+                            pad.dlKeyPressed = true;
+                            pad.dlKeyHold = true;
+                            break;
+                        case 'ul':
+                            pad.ulKeyPressed = true;
+                            pad.ulKeyHold = true;
+                            break;
+                        case 'c':
+                            pad.cKeyPressed = true;
+                            pad.cKeyHold = true;
+                            break;
+                        case 'ur':
+                            pad.urKeyPressed = true;
+                            pad.urKeyHold = true;
+                            break;
+                        case 'dr':
+                            pad.drKeyPressed = true;
+                            pad.drKeyHold = true;
+                            break;
                     }
                 }
             }
@@ -160,14 +157,14 @@ export class TouchInput extends GameObject {
     }
 
     onTouchUp(event) {
-        var canvasPosition =
+        let canvasPosition =
             this.engine.renderer.domElement.getBoundingClientRect();
 
         for (let i = 0; i < event.changedTouches.length; i++) {
             let touch = this.touchEvents[event.changedTouches[i].identifier];
             this.touchEvents[event.changedTouches[i].identifier] = null;
-            var mouseX = touch.pageX - canvasPosition.left;
-            var mouseY = touch.pageY - canvasPosition.top;
+            let mouseX = touch.pageX - canvasPosition.left;
+            let mouseY = touch.pageY - canvasPosition.top;
 
             for (let pad of this.pads) {
                 let kinds = pad.touchUp(mouseX, mouseY);

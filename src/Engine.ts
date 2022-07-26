@@ -347,7 +347,7 @@ class Engine {
     addToDOM(containerId: string) {
         this.containerId = containerId;
         const container = document.getElementById(containerId);
-        if (container) {
+        if (container && this.renderer?.domElement) {
             container.appendChild(this.renderer.domElement);
         }
     }
@@ -462,7 +462,7 @@ class Engine {
      *     engine.touchUp(event) ;
      * }, false );
      */
-    touchUp(event) {
+    touchUp(event: TouchEvent) {
         for (let i = 0; i < this._onTouchUpList.length; i++) {
             this._onTouchUpList[i].onTouchUp(event);
         }

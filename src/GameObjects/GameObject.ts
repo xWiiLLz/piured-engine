@@ -22,7 +22,7 @@ import { ResourceManager } from 'src/Resources/ResourceManager';
 
 export class GameObject {
     constructor(
-        private _resourceManager: ResourceManager,
+        protected _resourceManager: ResourceManager,
         public engine: Engine
     ) {
         engine.addToUpdateList(this);
