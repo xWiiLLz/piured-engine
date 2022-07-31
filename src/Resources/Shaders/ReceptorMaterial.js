@@ -16,24 +16,19 @@
  # along with piured-engine.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-"use strict"; // good practice - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
+'use strict'; // good practice - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
 
-import readFileContent from "../../Utils/FileReader.js";
-import * as THREE from 'three'
+import readFileContent from '../../Utils/FileReader';
+import * as THREE from 'three';
 
 class ReceptorMaterial {
-
-
-    _material ;
+    _material;
 
     constructor(map, resourcePath) {
-
-
         const uniforms = {
-            textureReceptor: {type: "t", value: map},
-            activeColorContribution: {type: "f", value: 0.0}
+            textureReceptor: { type: 't', value: map },
+            activeColorContribution: { type: 'f', value: 0.0 },
         };
-
 
         let vs = `
 varying vec2 vUv;
@@ -83,19 +78,16 @@ void main() {
 }
 `;
 
-
         this._material = new THREE.ShaderMaterial({
             uniforms: uniforms,
             vertexShader: vs,
-            fragmentShader: fs
+            fragmentShader: fs,
         });
-
     }
-
 
     get material() {
         return this._material;
     }
 }
 
-export {ReceptorMaterial} ;
+export { ReceptorMaterial };

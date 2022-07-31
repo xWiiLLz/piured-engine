@@ -16,25 +16,12 @@
  # along with piured-engine.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-"use strict"; // good practice - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
 
-import * as THREE from 'three'
-
-class ReceptorGeometry {
-
-    _receptorGeometry ;
-
-    constructor() {
-
-        // 5x1 rectangle
-        this._receptorGeometry = new THREE.PlaneGeometry( 5 , 1 , 1, 1 ) ;
-
-    }
-
-
-    get receptorGeometry() {
-        return this._receptorGeometry;
-    }
+export default async function readFileContent(
+    pathToFile: string,
+    callbackFunction: (content: string) => void
+) {
+    const response = await fetch(pathToFile, { method: 'GET', mode: 'cors' });
+    const content = await response.text();
+    callbackFunction(content);
 }
-
-export {ReceptorGeometry} ;

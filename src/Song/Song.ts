@@ -17,10 +17,10 @@
  *
  */
 
-import readFileContent from '../Utils/FileReader.js';
 import { Level, Meta, parseSSC } from 'ssc-parser';
 import * as THREE from 'three';
 import { Engine } from 'src/Engine.js';
+import readFileContent from 'src/Utils/FileReader';
 
 export class Song {
     meta!: Meta;
