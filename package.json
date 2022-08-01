@@ -2,7 +2,7 @@
     "name": "@piured/engine",
     "version": "0.1.0",
     "description": "A web-based Pump It Up engine",
-    "main": "index.js",
+    "main": "dist/index.js",
     "type": "module",
     "directories": {
         "doc": "docs",

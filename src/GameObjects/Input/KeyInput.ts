@@ -18,24 +18,30 @@
  */
 
 // This class is responsible for the input of a pad (5 steps)
-import { GameObject } from '../GameObject.js';
-import { Pad } from './Pad.js';
+import { GameObject } from '../GameObject';
+import { Pad } from './Pad';
 import * as THREE from 'three';
+import { ResourceManager } from '@src/Resources/ResourceManager';
+import { Engine } from '@src/Engine';
+import { FrameLog } from '../Sequence/SeqLog/FrameLog';
+import { PadConfig } from '@src/Config/KeyInputConfig';
+import { Panels } from '@src/Types/Panels';
 
 export class KeyInput extends GameObject {
-    _mesh;
+    _mesh: THREE.Object3D;
 
-    constructor(resourceManager, engine, frameLog) {
+    pads: Pad[] = [];
+    padsDic: Record<string, Pad> = {};
+    constructor(
+        resourceManager: ResourceManager,
+        engine: Engine,
+        public frameLog: FrameLog
+    ) {
         super(resourceManager, engine);
 
         // Connect to update lists, so it can be updated every frame and can keep track of key inputs.
         this.engine.addToKeyDownList(this);
         this.engine.addToKeyUpList(this);
-
-        this.frameLog = frameLog;
-
-        this.pads = [];
-        this.padsDic = {};
 
         this._mesh = new THREE.Object3D();
     }
@@ -44,7 +50,7 @@ export class KeyInput extends GameObject {
         return Object.keys(this.padsDic);
     }
 
-    addPad(keyMap, padId) {
+    addPad(keyMap: PadConfig, padId: string) {
         const pad = new Pad(
             this._resourceManager,
             this.engine,
@@ -56,10 +62,10 @@ export class KeyInput extends GameObject {
         this.padsDic[padId] = pad;
     }
 
-    onKeyDown(event) {
+    onKeyDown(event: KeyboardEvent) {
         const key = event.key.toLowerCase();
 
-        for (let pad of this.pads) {
+        for (const pad of this.pads) {
             if (key === pad.dlKey && !pad.dlKeyHold) {
                 pad.dlKeyHold = true;
                 pad.dlKeyPressed = true;
@@ -84,10 +90,10 @@ export class KeyInput extends GameObject {
         }
     }
 
-    onKeyUp(event) {
+    onKeyUp(event: KeyboardEvent) {
         const key = event.key;
 
-        for (let pad of this.pads) {
+        for (const pad of this.pads) {
             if (key === pad.dlKey) {
                 pad.dlKeyHold = false;
                 // console.log('dl up: ' + key);
@@ -107,22 +113,26 @@ export class KeyInput extends GameObject {
         }
     }
 
-    isPressed(kind, padId) {
+    isPressed(kind: Panels, padId: string) {
         return this.padsDic[padId].isPressed(kind);
     }
 
-    isHeld(kind, padId) {
+    isHeld(kind: Panels, padId: string) {
         return this.padsDic[padId].isHeld(kind);
     }
 
-    ready() {}
+    ready() {
+        // no-op
+    }
 
-    update(delta) {}
+    update(delta: number) {
+        // no-op
+    }
 
     getPressed() {
-        var list = [];
+        const list = [];
 
-        for (let pad of this.pads) {
+        for (const pad of this.pads) {
             if (pad.dlKeyPressed) {
                 list.push(['dl', pad.padId]);
             }

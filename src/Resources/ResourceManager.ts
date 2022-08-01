@@ -15,7 +15,7 @@ import { BackgroundMaterial } from './Shaders/BackgroundMaterial';
 import { AdditiveMaterial } from './Materials/AdditiveMaterial';
 import { ReceptorMaterial } from './Shaders/ReceptorMaterial';
 import * as THREE from 'three';
-import { Panels } from 'src/Types/Panels';
+import { Panels } from '@src/Types/Panels';
 
 type NoteskinTextureKeys =
     | 'SDL'

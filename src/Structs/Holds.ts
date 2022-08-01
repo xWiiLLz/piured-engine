@@ -1,7 +1,7 @@
 // Data structure that supports the StepQueue functionality
 
-import { StepHold } from 'src/GameObjects/StepNotes/StepHold';
-import { Panels } from 'src/Types/Panels';
+import { StepHold } from '@src/GameObjects/StepNotes/StepHold';
+import { Panels } from '@src/Types/Panels';
 
 // It holds at a given time, the current holds and their state.
 export class Holds {

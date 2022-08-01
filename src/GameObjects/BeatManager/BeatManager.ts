@@ -23,10 +23,10 @@ import { Second2Beat } from './Second2Beat';
 import { Second2Displacement } from './Second2Displacement';
 import { SongTime2Second } from './SongTime2Second';
 import { Beat2Speed } from './Beat2Speed';
-import { ResourceManager } from 'src/Resources/ResourceManager';
-import { Engine } from 'src/Engine';
-import { Song } from 'src/Song/Song';
-import { WritableKeysWithType } from 'src/Types/Utils';
+import { ResourceManager } from '@src/Resources/ResourceManager';
+import { Engine } from '@src/Engine';
+import { Song } from '@src/Song/Song';
+import { WritableKeysWithType } from '@src/Types/Utils';
 
 export class BeatManager extends GameObject {
     scrollList: string | number[][];

@@ -21,8 +21,8 @@
 import { GameObject } from '../GameObject';
 import { TouchPad } from './TouchPad';
 import * as THREE from 'three';
-import { ResourceManager } from 'src/Resources/ResourceManager';
-import { Engine } from 'src/Engine';
+import { ResourceManager } from '@src/Resources/ResourceManager';
+import { Engine } from '@src/Engine';
 import { FrameLog } from '../Sequence/SeqLog/FrameLog';
 import { Pad } from './Pad';
 

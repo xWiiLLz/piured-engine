@@ -17,7 +17,7 @@
  *
  */
 
-import { Panels } from 'src/Types/Panels';
+import { Panels } from '@src/Types/Panels';
 import { InputConfig } from './InputConfig';
 
 type Key = KeyboardEvent['key'];

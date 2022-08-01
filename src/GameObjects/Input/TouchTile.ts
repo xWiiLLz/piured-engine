@@ -20,8 +20,8 @@
 
 import { GameObject } from '../GameObject.js';
 import * as THREE from 'three';
-import { Engine } from 'src/Engine.js';
-import { ResourceManager } from 'src/Resources/ResourceManager.js';
+import { Engine } from '@src/Engine.js';
+import { ResourceManager } from '@src/Resources/ResourceManager.js';
 
 class TouchTile extends GameObject {
     _kind;
