@@ -289,6 +289,10 @@ class Engine {
      * engine.configureStage(stageConfig) ;
      */
     async configureStage(stageConfig: StageConfig) {
+        if (!this.renderer) {
+            throw new Error('Renderer not initialized');
+        }
+
         this.resourcePath = stageConfig.resourcePath;
         this.playBackSpeed = stageConfig.playBackSpeed;
         this.song = new Song(

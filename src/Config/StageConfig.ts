@@ -54,7 +54,7 @@ export class StageConfig {
         private _audioFile: string,
         private _playBackSpeed: number,
         private _offset: number,
-        private _noteskins: string,
+        private _noteskins: string[],
         private _onReadyToStart: () => void = () => {
             // noop
         }

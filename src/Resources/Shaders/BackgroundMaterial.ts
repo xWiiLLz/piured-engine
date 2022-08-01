@@ -1,38 +1,12 @@
-/*
- * # Copyright (C) Pedro G. Bascoy
- # This file is part of piured-engine <https://github.com/piulin/piured-engine>.
- #
- # piured-engine is free software: you can redistribute it and/or modify
- # it under the terms of the GNU General Public License as published by
- # the Free Software Foundation, either version 3 of the License, or
- # (at your option) any later version.
- #
- # piured-engine is distributed in the hope that it will be useful,
- # but WITHOUT ANY WARRANTY; without even the implied warranty of
- # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- # GNU General Public License for more details.
- #
- # You should have received a copy of the GNU General Public License
- # along with piured-engine.If not, see <http://www.gnu.org/licenses/>.
- *
- */
-"use strict"; // good practice - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
+import * as THREE from 'three';
 
+export class BackgroundMaterial {
+    private _material: THREE.ShaderMaterial;
 
-import readFileContent from "../../Utils/FileReader.js";
-import * as THREE from 'three'
-
-class BackgroundMaterial {
-
-
-    _material ;
-
-
-    constructor( resourcePath ) {
-
-        let colorBG1 = new THREE.Color( 0x0F061F ) ;
-        let colorBG2 = new THREE.Color( 0x341D00) ;
-        let colorBG3 = new THREE.Color( 0x002A38 ) ;
+    constructor(resourcePath?: string) {
+        const colorBG1 = new THREE.Color(0x0f061f);
+        const colorBG2 = new THREE.Color(0x341d00);
+        const colorBG3 = new THREE.Color(0x002a38);
         // let colorBG = new THREE.Color( Math.random()*0.4,Math.random()*0.4,Math.random()*0.4 ) ;
 
         // uniform vec2 u_resolution;
@@ -41,7 +15,6 @@ class BackgroundMaterial {
         // uniform float u_frame;
 
         // procedural texturing.
-
 
         // var uniforms = {
         //     uMaterialColor: { type: "c", value: colorBG },
@@ -59,36 +32,35 @@ class BackgroundMaterial {
         //     scanLineOpacity: {type: "v2", value : new THREE.Vector2(0.9,1.0) }
         // };
 
-        var uniforms = {
+        const uniforms = {
             u_resolution: {
                 type: 'v2',
-                value: new THREE.Vector2(6000,6000)
+                value: new THREE.Vector2(6000, 6000),
             },
             u_mouse: {
                 type: 'v2',
-                value: new THREE.Vector2(220,220)
+                value: new THREE.Vector2(220, 220),
             },
             u_time: {
                 type: 'f',
-                value: 0.0
+                value: 0.0,
             },
             u_frame: {
                 type: 'f',
-                value: 0.0
+                value: 0.0,
             },
-            uMaterialColor1: { type: "c", value: colorBG1 },
-            uMaterialColor2: { type: "c", value: colorBG2 },
-            uMaterialColor3: { type: "c", value: colorBG3 },
+            uMaterialColor1: { type: 'c', value: colorBG1 },
+            uMaterialColor2: { type: 'c', value: colorBG2 },
+            uMaterialColor3: { type: 'c', value: colorBG3 },
             uScale: {
-                type: "f",
-                value: 100.0
+                type: 'f',
+                value: 100.0,
             },
-            uThreshold : { type: "f", value: 0.5 },
-            curvature : { type: "v2", value : new THREE.Vector2(0.9,0.8)},
-        }
+            uThreshold: { type: 'f', value: 0.5 },
+            curvature: { type: 'v2', value: new THREE.Vector2(0.9, 0.8) },
+        };
 
-
-        let vs = `
+        const vs = `
 #define GLSLIFY 1
 // Texture varyings
 varying vec2 v_uv;
@@ -104,12 +76,12 @@ void main() {
     // Vertex shader output
     gl_Position =  vec4( position, 1.0 );
 }
-`
+`;
         // await readFileContent(resourcePath + 'shaders/strc-background.vert',function (content) {
         //     vs = content ;
         // }) ;
 
-let fs = `
+        const fs = `
 #define GLSLIFY 1
 // Common uniforms
 uniform vec2 u_resolution;
@@ -192,16 +164,15 @@ void main() {
     // float rand = (random2d(v_uv + 1.133001 * vec2(u_time, 1.13)) - 1.2) ;
     gl_FragColor = vec4(c2+c3+background_color, 1.0);
 }
-`
+`;
 
         this._material = new THREE.ShaderMaterial({
             uniforms: uniforms,
             vertexShader: vs,
-            fragmentShader: fs
+            fragmentShader: fs,
         });
 
-        this._material.depthWrite = false ;
-
+        this._material.depthWrite = false;
 
         // // color picker
         // const colorThief = new ColorThief();
@@ -218,13 +189,9 @@ void main() {
         // });
         //
         // img.src = coverPath ;
-
     }
-
 
     get material() {
         return this._material;
     }
 }
-
-export {BackgroundMaterial} ;
