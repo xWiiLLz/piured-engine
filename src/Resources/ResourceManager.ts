@@ -15,7 +15,7 @@ import { BackgroundMaterial } from './Shaders/BackgroundMaterial';
 import { AdditiveMaterial } from './Materials/AdditiveMaterial';
 import { ReceptorMaterial } from './Shaders/ReceptorMaterial';
 import * as THREE from 'three';
-import { Panels } from '@src/Types/Panels';
+import { Panels } from '../Types/Panels';
 
 type NoteskinTextureKeys =
     | 'SDL'
@@ -64,7 +64,7 @@ class ResourceManager {
     _materialsDict: { NOTESKINS: Record<string, NoteskinMaterials> } = {
         NOTESKINS: {},
     };
-    _geometryDict!: {
+    _geometryDict: {
         B: BackgroundGeometry;
         C: ComboGeometry;
         D: DigitGeometry;
@@ -76,7 +76,7 @@ class ResourceManager {
         DL: DLifeBarGeometry;
         T: TipGeometry;
         P: PulseGeometry;
-    };
+    } = {} as any; // Loaded in constructor
     _textureDict: Record<StageTextureKeys, PNGTexture> & {
         NOTESKINS: Record<string, NoteskinTexture>;
     } = { NOTESKINS: {} as Record<string, NoteskinTexture> } as any;

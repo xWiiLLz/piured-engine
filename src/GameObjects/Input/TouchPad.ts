@@ -21,10 +21,10 @@
 import { Pad } from './Pad';
 import { TouchTile } from './TouchTile';
 import * as THREE from 'three';
-import { Engine } from '@src/Engine';
-import { ResourceManager } from '@src/Resources/ResourceManager';
+import { Engine } from '../../Engine';
+import { ResourceManager } from '../../Resources/ResourceManager';
 import { FrameLog } from '../Sequence/SeqLog/FrameLog';
-import { Panels } from '@src/Types/Panels';
+import { Panels } from '../../Types/Panels';
 
 class TouchPad extends Pad {
     _mesh;

@@ -395,7 +395,7 @@ class Engine {
             pb = 0;
         }
         const time = 500;
-        if (this._playBackTween !== undefined) {
+        if (this._playBackTween) {
             TWEEN.remove(this._playBackTween);
         }
         const playBackUser = this._playBackUser;

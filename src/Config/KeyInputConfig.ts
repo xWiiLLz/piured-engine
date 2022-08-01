@@ -17,7 +17,7 @@
  *
  */
 
-import { Panels } from '@src/Types/Panels';
+import { Panels } from '../Types/Panels';
 import { InputConfig } from './InputConfig';
 
 type Key = KeyboardEvent['key'];
@@ -26,11 +26,7 @@ export type PadConfig = {
     [panel in Panels]: Key;
 };
 
-type PadConfigArg = {
-    [panel in keyof typeof Panels]: Key;
-};
-
-const mapPadConfig = (input: PadConfigArg) =>
+const mapPadConfig = (input: PadConfig) =>
     Object.fromEntries(
         Object.entries(input).map(
             ([enumKey, value]) =>
@@ -63,11 +59,11 @@ const mapPadConfig = (input: PadConfigArg) =>
 export class KeyInputConfig extends InputConfig {
     private _lpad: PadConfig;
     private _rpad: PadConfig;
-    constructor(leftPad: PadConfigArg, rightPad: PadConfigArg) {
+    constructor(leftPad: PadConfig, rightPad: PadConfig) {
         super();
 
-        this._lpad = mapPadConfig(leftPad);
-        this._rpad = mapPadConfig(rightPad);
+        this._lpad = leftPad;
+        this._rpad = rightPad;
     }
 
     get lpad() {

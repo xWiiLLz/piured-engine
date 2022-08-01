@@ -17,8 +17,8 @@
  *
  */
 
-import { Engine } from '@src/Engine';
-import { ResourceManager } from '@src/Resources/ResourceManager';
+import { Engine } from '../Engine';
+import { ResourceManager } from '../Resources/ResourceManager';
 
 export class GameObject {
     constructor(

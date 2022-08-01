@@ -21,11 +21,11 @@
 import { GameObject } from '../GameObject';
 import { Pad } from './Pad';
 import * as THREE from 'three';
-import { ResourceManager } from '@src/Resources/ResourceManager';
-import { Engine } from '@src/Engine';
+import { ResourceManager } from '../../Resources/ResourceManager';
+import { Engine } from '../../Engine';
 import { FrameLog } from '../Sequence/SeqLog/FrameLog';
-import { PadConfig } from '@src/Config/KeyInputConfig';
-import { Panels } from '@src/Types/Panels';
+import { PadConfig } from '../../Config/KeyInputConfig';
+import { Panels } from '../../Types/Panels';
 
 export class KeyInput extends GameObject {
     _mesh: THREE.Object3D;

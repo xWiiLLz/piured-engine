@@ -19,8 +19,8 @@
 
 import { Level, Meta, parseSSC } from 'ssc-parser';
 import * as THREE from 'three';
-import { Engine } from '@src/Engine.js';
-import readFileContent from '@src/Utils/FileReader';
+import { Engine } from '../Engine.js';
+import readFileContent from '../Utils/FileReader';
 
 export class Song {
     meta!: Meta;
@@ -95,15 +95,15 @@ export class Song {
     }
 
     getStops(levelIndex: number) {
-        let arr;
         if ('STOPS' in this.levels[levelIndex]) {
-            arr = this.levels[levelIndex].STOPS;
-        } else if ('STOPS' in this.meta) {
-            arr = this.meta['STOPS'];
-        } else {
-            return [];
+            return this.levels[levelIndex].STOPS;
         }
-        return arr;
+
+        if ('STOPS' in this.meta) {
+            return this.meta['STOPS'];
+        }
+
+        return undefined;
     }
 
     getDelays(levelIndex: number) {

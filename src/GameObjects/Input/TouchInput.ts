@@ -21,10 +21,11 @@
 import { GameObject } from '../GameObject';
 import { TouchPad } from './TouchPad';
 import * as THREE from 'three';
-import { ResourceManager } from '@src/Resources/ResourceManager';
-import { Engine } from '@src/Engine';
+import { ResourceManager } from '../../Resources/ResourceManager';
+import { Engine } from '../../Engine';
 import { FrameLog } from '../Sequence/SeqLog/FrameLog';
 import { Pad } from './Pad';
+import { Panels } from '../../Types/Panels';
 
 export class TouchInput extends GameObject {
     private _mesh;
@@ -156,18 +157,21 @@ export class TouchInput extends GameObject {
         }
     }
 
-    onTouchUp(event) {
-        let canvasPosition =
-            this.engine.renderer.domElement.getBoundingClientRect();
+    onTouchUp(event: TouchEvent) {
+        const canvasPosition =
+            this.engine.renderer?.domElement.getBoundingClientRect();
+        if (!canvasPosition) return;
 
         for (let i = 0; i < event.changedTouches.length; i++) {
-            let touch = this.touchEvents[event.changedTouches[i].identifier];
+            const touch = this.touchEvents[event.changedTouches[i].identifier];
             this.touchEvents[event.changedTouches[i].identifier] = null;
-            let mouseX = touch.pageX - canvasPosition.left;
-            let mouseY = touch.pageY - canvasPosition.top;
+            if (!touch) continue;
 
-            for (let pad of this.pads) {
-                let kinds = pad.touchUp(mouseX, mouseY);
+            const mouseX = touch.pageX - canvasPosition.left;
+            const mouseY = touch.pageY - canvasPosition.top;
+
+            for (const pad of this.pads) {
+                const kinds = pad.touchUp(mouseX, mouseY);
 
                 for (let j = 0; j < kinds.length; j++) {
                     const kind = kinds[j];
@@ -193,20 +197,22 @@ export class TouchInput extends GameObject {
         }
     }
 
-    isPressed(kind, padId: string) {
+    isPressed(kind: Panels, padId: string) {
         return this.padsDic[padId].isPressed(kind);
     }
 
-    isHeld(kind, padId: string) {
+    isHeld(kind: Panels, padId: string) {
         return this.padsDic[padId].isHeld(kind);
     }
 
-    update(delta) {}
+    update(delta: number) {
+        // no-op
+    }
 
     getPressed() {
         const list = [];
 
-        for (let pad of this.pads) {
+        for (const pad of this.pads) {
             if (pad.dlKeyPressed) {
                 list.push(['dl', pad.padId]);
             }

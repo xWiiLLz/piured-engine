@@ -17,9 +17,9 @@
  *
  */
 
-import { Engine } from '@src/Engine';
-import { ResourceManager } from '@src/Resources/ResourceManager';
-import { Panels } from '@src/Types/Panels';
+import { Engine } from '../../../Engine';
+import { ResourceManager } from '../../../Resources/ResourceManager';
+import { Panels } from '../../../Types/Panels';
 import { GameObject } from '../../GameObject';
 
 type Step = {

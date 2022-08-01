@@ -18,10 +18,10 @@
  */
 'use strict'; // good practice - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
 
-import { PadConfig } from '@src/Config/KeyInputConfig';
-import { Engine } from '@src/Engine';
-import { ResourceManager } from '@src/Resources/ResourceManager';
-import { Panels } from '@src/Types/Panels';
+import { PadConfig } from '../../Config/KeyInputConfig';
+import { Engine } from '../../Engine';
+import { ResourceManager } from '../../Resources/ResourceManager';
+import { Panels } from '../../Types/Panels';
 import { GameObject } from '../GameObject';
 import { FrameLog } from '../Sequence/SeqLog/FrameLog';
 

@@ -23,10 +23,10 @@ import { Second2Beat } from './Second2Beat';
 import { Second2Displacement } from './Second2Displacement';
 import { SongTime2Second } from './SongTime2Second';
 import { Beat2Speed } from './Beat2Speed';
-import { ResourceManager } from '@src/Resources/ResourceManager';
-import { Engine } from '@src/Engine';
-import { Song } from '@src/Song/Song';
-import { WritableKeysWithType } from '@src/Types/Utils';
+import { Engine } from '../../Engine';
+import { ResourceManager } from '../../Resources/ResourceManager';
+import { Song } from '../../Song/Song';
+import { WritableKeysWithType } from '../../Types/Utils';
 
 export class BeatManager extends GameObject {
     scrollList: string | number[][];
@@ -198,6 +198,8 @@ export class BeatManager extends GameObject {
     }
 
     isNoteInWarp(beat: number) {
+        if (!this.warpsList) return;
+
         for (const warp of this.warpsList) {
             const b1 = warp[0];
             const b2 = b1 + warp[1];
