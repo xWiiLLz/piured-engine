@@ -7,6 +7,7 @@
         "strict": true,
         "sourceMap": true,
         "module": "es2015",
+        "noEmitOnError": false,
         "target": "es5",
         "moduleResolution": "node",
         "lib": ["dom", "es2019"]
