@@ -22,6 +22,7 @@
 import { Song } from './Song/Song';
 import { ResourceManager } from './Resources/ResourceManager';
 import { Stage } from './GameObjects/Stage/Stage';
+import Stats from 'stats.js';
 import { RemoteInput } from './Config/RemoteInput';
 import * as THREE from 'three';
 import TWEEN, { Tween } from '@tweenjs/tween.js';
@@ -206,6 +207,7 @@ class Engine {
     window?: Window;
     resourcePath?: string;
     playBackSpeed: any;
+    stats: any;
 
     /**
      * Configures the renderer and sets the camera into position. Call this method before setting up the stage through {@link Engine#configureStage}.
@@ -271,8 +273,7 @@ class Engine {
         // this.cameraControls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
         // this.cameraControls.target = focus ;
         // this.camera.lookAt(focus);
-        // this.stats = this.createStats();
-        // document.body.appendChild( this.stats.domElement );
+        this.stats = this.createStats();
 
         // document.addEventListener( 'mousedown', this.onDocumentMouseDown.bind(this), false );
     }
@@ -352,7 +353,9 @@ class Engine {
         this.containerId = containerId;
         const container = document.getElementById(containerId);
         if (container && this.renderer?.domElement) {
+            container.style.position = 'relative';
             container.appendChild(this.renderer.domElement);
+            container.appendChild(this.stats.domElement);
         }
     }
 
@@ -695,10 +698,11 @@ class Engine {
 
     createStats() {
         const stats = new Stats();
-        stats.setMode(0);
-        stats.domElement.style.position = 'absolute';
-        stats.domElement.style.left = '0';
-        stats.domElement.style.top = '0';
+        stats.showPanel(0);
+
+        stats.dom.style.position = 'absolute';
+        stats.dom.style.left = '0';
+        stats.dom.style.top = '0';
         return stats;
     }
 
@@ -782,7 +786,7 @@ class Engine {
 
         // this.cameraControls.update(delta);
         this.renderer.render(this.scene, this.camera);
-        // this.stats.update();
+        this.stats.update();
     }
 }
 export { Engine };
