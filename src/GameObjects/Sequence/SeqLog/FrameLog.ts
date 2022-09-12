@@ -1,22 +1,3 @@
-/*
- * # Copyright (C) Pedro G. Bascoy
- # This file is part of piured-engine <https://github.com/piulin/piured-engine>.
- #
- # piured-engine is free software: you can redistribute it and/or modify
- # it under the terms of the GNU General Public License as published by
- # the Free Software Foundation, either version 3 of the License, or
- # (at your option) any later version.
- #
- # piured-engine is distributed in the hope that it will be useful,
- # but WITHOUT ANY WARRANTY; without even the implied warranty of
- # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- # GNU General Public License for more details.
- #
- # You should have received a copy of the GNU General Public License
- # along with piured-engine.If not, see <http://www.gnu.org/licenses/>.
- *
- */
-
 import { Engine } from '../../../Engine';
 import { ResourceManager } from '../../../Resources/ResourceManager';
 import { Panels } from '../../../Types/Panels';
@@ -26,23 +7,25 @@ type Step = {
     id: string;
 };
 
+export type FrameLogDto = {
+    removeSteps?: string[];
+    padInput?: {
+        kind: Panels;
+        padId: string;
+        action: PadInputAction;
+        value: boolean;
+    }[];
+    receptorFX?: string[];
+    judgment?: {
+        grade: number;
+        combo: number;
+        step: unknown;
+    };
+};
+
 export type PadInputAction = 'pressed' | 'hold';
 export class FrameLog extends GameObject {
-    _json: {
-        removeSteps?: string[];
-        padInput?: {
-            kind: Panels;
-            padId: string;
-            action: PadInputAction;
-            value: boolean;
-        }[];
-        receptorFX?: string[];
-        judgment?: {
-            grade: number;
-            combo: number;
-            step: unknown;
-        };
-    } = {};
+    _json: FrameLogDto = {};
 
     constructor(
         resourceManager: ResourceManager,

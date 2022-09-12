@@ -26,28 +26,28 @@ import { GameObject } from '../GameObject';
 import { FrameLog } from '../Sequence/SeqLog/FrameLog';
 
 export class Pad extends GameObject {
-    private _dlKey?: string;
-    private _ulKey?: string;
-    private _cKey?: string;
-    private _urKey?: string;
-    private _drKey?: string;
-    private _dlKeyPressed = false;
-    private _ulKeyPressed = false;
-    private _cKeyPressed = false;
-    private _urKeyPressed = false;
-    private _drKeyPressed = false;
-    private _dlKeyHold = false;
-    private _ulKeyHold = false;
-    private _cKeyHold = false;
-    private _urKeyHold = false;
-    private _drKeyHold = false;
+    protected _dlKey?: string;
+    protected _ulKey?: string;
+    protected _cKey?: string;
+    protected _urKey?: string;
+    protected _drKey?: string;
+    protected _dlKeyPressed = false;
+    protected _ulKeyPressed = false;
+    protected _cKeyPressed = false;
+    protected _urKeyPressed = false;
+    protected _drKeyPressed = false;
+    protected _dlKeyHold = false;
+    protected _ulKeyHold = false;
+    protected _cKeyHold = false;
+    protected _urKeyHold = false;
+    protected _drKeyHold = false;
 
     constructor(
         resourceManager: ResourceManager,
         engine: Engine,
         keyMap: PadConfig | null,
-        private _padId: string,
-        public frameLog: FrameLog
+        protected _padId: string,
+        public frameLog: FrameLog | null = null
     ) {
         super(resourceManager, engine);
         // Key maps
@@ -62,19 +62,14 @@ export class Pad extends GameObject {
         switch (kind) {
             case Panels.downLeft:
                 return this.dlKeyPressed;
-                break;
             case Panels.upLeft:
                 return this.ulKeyPressed;
-                break;
             case Panels.center:
                 return this.cKeyPressed;
-                break;
             case Panels.upRight:
                 return this.urKeyPressed;
-                break;
             case Panels.downRight:
                 return this.drKeyPressed;
-                break;
         }
     }
 
@@ -82,19 +77,14 @@ export class Pad extends GameObject {
         switch (kind) {
             case Panels.downLeft:
                 return this.dlKeyHold;
-                break;
             case Panels.upLeft:
                 return this.ulKeyHold;
-                break;
             case Panels.center:
                 return this.cKeyHold;
-                break;
             case Panels.upRight:
                 return this.urKeyHold;
-                break;
             case Panels.downRight:
                 return this.drKeyHold;
-                break;
         }
     }
 
@@ -179,7 +169,7 @@ export class Pad extends GameObject {
 
     set dlKeyPressed(value: boolean) {
         if (value === true) {
-            this.frameLog.logPadInput(
+            this.frameLog?.logPadInput(
                 Panels.downLeft,
                 this._padId,
                 'pressed',
@@ -195,7 +185,7 @@ export class Pad extends GameObject {
 
     set ulKeyPressed(value: boolean) {
         if (value === true) {
-            this.frameLog.logPadInput(
+            this.frameLog?.logPadInput(
                 Panels.upLeft,
                 this._padId,
                 'pressed',
@@ -211,7 +201,7 @@ export class Pad extends GameObject {
 
     set cKeyPressed(value: boolean) {
         if (value === true) {
-            this.frameLog.logPadInput(
+            this.frameLog?.logPadInput(
                 Panels.center,
                 this._padId,
                 'pressed',
@@ -227,7 +217,7 @@ export class Pad extends GameObject {
 
     set urKeyPressed(value: boolean) {
         if (value === true) {
-            this.frameLog.logPadInput(
+            this.frameLog?.logPadInput(
                 Panels.upRight,
                 this._padId,
                 'pressed',
@@ -243,7 +233,7 @@ export class Pad extends GameObject {
 
     set drKeyPressed(value: boolean) {
         if (value === true) {
-            this.frameLog.logPadInput(
+            this.frameLog?.logPadInput(
                 Panels.downRight,
                 this._padId,
                 'pressed',
@@ -258,7 +248,7 @@ export class Pad extends GameObject {
     }
 
     set dlKeyHold(value: boolean) {
-        this.frameLog.logPadInput(Panels.downLeft, this._padId, 'hold', value);
+        this.frameLog?.logPadInput(Panels.downLeft, this._padId, 'hold', value);
         this._dlKeyHold = value;
     }
 
@@ -267,7 +257,7 @@ export class Pad extends GameObject {
     }
 
     set ulKeyHold(value: boolean) {
-        this.frameLog.logPadInput(Panels.upLeft, this._padId, 'hold', value);
+        this.frameLog?.logPadInput(Panels.upLeft, this._padId, 'hold', value);
         this._ulKeyHold = value;
     }
 
@@ -276,7 +266,7 @@ export class Pad extends GameObject {
     }
 
     set cKeyHold(value: boolean) {
-        this.frameLog.logPadInput(Panels.center, this._padId, 'hold', value);
+        this.frameLog?.logPadInput(Panels.center, this._padId, 'hold', value);
         this._cKeyHold = value;
     }
 
@@ -285,7 +275,7 @@ export class Pad extends GameObject {
     }
 
     set urKeyHold(value: boolean) {
-        this.frameLog.logPadInput(Panels.upRight, this._padId, 'hold', value);
+        this.frameLog?.logPadInput(Panels.upRight, this._padId, 'hold', value);
         this._urKeyHold = value;
     }
 
@@ -294,7 +284,12 @@ export class Pad extends GameObject {
     }
 
     set drKeyHold(value: boolean) {
-        this.frameLog.logPadInput(Panels.downRight, this._padId, 'hold', value);
+        this.frameLog?.logPadInput(
+            Panels.downRight,
+            this._padId,
+            'hold',
+            value
+        );
         this._drKeyHold = value;
     }
 }

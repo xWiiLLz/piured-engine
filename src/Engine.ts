@@ -31,6 +31,7 @@ import { PlayerConfig } from './Config/PlayerConfig';
 import { GameObject } from './GameObjects/GameObject';
 import { KeyInput } from './GameObjects/Input/KeyInput';
 import { TouchInput } from './GameObjects/Input/TouchInput';
+import { FrameLogDto } from './GameObjects/Sequence/SeqLog/FrameLog';
 
 /**
  * PIURED is a Pump It Up stage simulator that works directly in your browser.
@@ -482,7 +483,7 @@ class Engine {
      * @example <caption> Moving the camera backwards to fully show players' stages when both are playing `pump-double` styles </caption>
      * engine.setCameraPosition(0,-3.4,12) ;
      */
-    setCameraPosition(X, Y, Z) {
+    setCameraPosition(X: number, Y: number, Z: number) {
         this.camera.position.x = X;
         this.camera.position.y = Y;
         this.camera.position.z = Z;
@@ -500,7 +501,7 @@ class Engine {
      *     engine.setCameraPosition(0,-3.4,12) ;
      * }
      */
-    queryStageType(level) {
+    queryStageType(level: number) {
         return this.song.getLevelStyle(level);
     }
 
@@ -534,9 +535,9 @@ class Engine {
      *
      */
     startPlayBack(
-        dateToStart,
+        dateToStart: number,
         getDateFn = () => {
-            return new Date();
+            return Number(new Date());
         }
     ) {
         this.song.startPlayBack(dateToStart, getDateFn);
@@ -568,7 +569,7 @@ class Engine {
      * @example <caption> Resize drawable canvas to 500x500 px </caption>
      * engine.resize(500, 500)
      */
-    resize(newWidth, newHeight) {
+    resize(newWidth: number, newHeight: number) {
         this.camera.aspect = newWidth / newHeight;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(newWidth, newHeight);
@@ -585,7 +586,7 @@ class Engine {
      *
      * engine.logFrame(JSON) ;
      */
-    logFrame(frameLog) {
+    logFrame(frameLog: FrameLogDto) {
         this._inputFrameLogList.push(frameLog);
     }
 
@@ -602,7 +603,7 @@ class Engine {
      *     mm.sendFrameLog(frameLog) ;
      * }
      */
-    set onFrameLog(value) {
+    set onFrameLog(value: (frameLog: FrameLogDto) => void) {
         this._onFrameLog = value;
     }
 
@@ -617,7 +618,7 @@ class Engine {
      *     window.close() ;
      * }
      */
-    set onStageCleared(value) {
+    set onStageCleared(value: boolean) {
         this._onStageCleared = value;
     }
 
@@ -649,15 +650,15 @@ class Engine {
         });
     }
 
-    addToUpdateList(gameObject) {
+    addToUpdateList(gameObject: GameObject) {
         this._updateList.push(gameObject);
     }
 
-    addToInputList(gameObject) {
+    addToInputList(gameObject: GameObject) {
         this._inputList.push(gameObject);
     }
 
-    addToKeyUpList(gameObject) {
+    addToKeyUpList(gameObject: GameObject) {
         this._onKeyUpList.push(gameObject);
     }
 
@@ -665,11 +666,11 @@ class Engine {
         this._onKeyDownList.push(keyInput);
     }
 
-    addToTouchUpList(gameObject) {
+    addToTouchUpList(gameObject: GameObject) {
         this._onTouchUpList.push(gameObject);
     }
 
-    addToTouchDownList(gameObject) {
+    addToTouchDownList(gameObject: GameObject) {
         this._onTouchDownList.push(gameObject);
     }
 
@@ -680,7 +681,7 @@ class Engine {
         this._outputFrameLogList = [];
     }
 
-    addToOutputFrameLogList(frameLog) {
+    addToOutputFrameLogList(frameLog: FrameLogDto) {
         if (this._onFrameLog !== undefined) {
             this._onFrameLog({
                 playerStageId: frameLog.playerStageId,
