@@ -211,25 +211,25 @@ class JudgmentScale extends GameObject {
         // Negative means later (pump prefers this)
         const judgment =
             timeElapse > 0 ? this.judgments.NJ.early : this.judgments.NJ.late;
-        console.log(timeElapse);
         const abs = Math.abs(timeElapse) * 1000; // in ms
+        console.log(`${abs}ms`);
 
-        if (abs < judgment.p) {
+        if (abs <= judgment.p) {
             this.perfect();
             return 'p';
         }
 
-        if (abs < judgment.gr) {
+        if (abs <= judgment.gr) {
             this.great();
             return 'gr';
         }
 
-        if (abs < judgment.go) {
+        if (abs <= judgment.go) {
             this.good();
             return 'go';
         }
 
-        if (abs < judgment.b) {
+        if (abs <= judgment.b) {
             this.bad();
             return 'b';
         }
