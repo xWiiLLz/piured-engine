@@ -1,37 +1,20 @@
-/*
- * # Copyright (C) Pedro G. Bascoy
- # This file is part of piured-engine <https://github.com/piulin/piured-engine>.
- #
- # piured-engine is free software: you can redistribute it and/or modify
- # it under the terms of the GNU General Public License as published by
- # the Free Software Foundation, either version 3 of the License, or
- # (at your option) any later version.
- #
- # piured-engine is distributed in the hope that it will be useful,
- # but WITHOUT ANY WARRANTY; without even the implied warranty of
- # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- # GNU General Public License for more details.
- #
- # You should have received a copy of the GNU General Public License
- # along with piured-engine.If not, see <http://www.gnu.org/licenses/>.
- *
- */
-'use strict'; // good practice - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
-
 import { Point } from './Point.js';
 import { Curve } from './Curve.js';
 import { Interval } from './Interval.js';
+import {Second2Beat} from "./Second2Beat";
 
 class SongTime2Second {
-    _curve;
-    _stops;
-    _delays;
-    _s2b;
-    _eps = 0.000001;
-    constructor(stops, delays, warps, s2b) {
+    _curve: Curve;
+    _stops: number[][];
+    _delays: number[][];
+    _warps: number[][];
+    _s2b: Second2Beat;
+    _eps: number = 0.000001;
+    constructor(stops: number[][], delays: number[][], warps: number[][], s2b: Second2Beat) {
         this._s2b = s2b;
         let longFloat = 100000.0;
 
+        //TODO: do we need this?
         this._stops = stops ? Array.from(stops) : [];
         this._delays = delays ? Array.from(delays) : [];
         this._warps = warps ? Array.from(warps) : [];
@@ -70,7 +53,7 @@ class SongTime2Second {
         }
     }
 
-    flatten(beat, span, eps) {
+    flatten(beat: number, span: number, eps: number): void {
         let y1 = this._s2b.reverseScry(beat + eps).x;
         let x1 = this._curve.scryX(new Point(0.0, y1)).x;
         let x2 = x1 + span;
@@ -141,5 +124,3 @@ class SongTime2Second {
         return this._curve.scryX(p);
     }
 }
-
-export { SongTime2Second };

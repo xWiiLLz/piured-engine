@@ -1,210 +1,150 @@
-/*
- * # Copyright (C) Pedro G. Bascoy
- # This file is part of piured-engine <https://github.com/piulin/piured-engine>.
- #
- # piured-engine is free software: you can redistribute it and/or modify
- # it under the terms of the GNU General Public License as published by
- # the Free Software Foundation, either version 3 of the License, or
- # (at your option) any later version.
- #
- # piured-engine is distributed in the hope that it will be useful,
- # but WITHOUT ANY WARRANTY; without even the implied warranty of
- # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- # GNU General Public License for more details.
- #
- # You should have received a copy of the GNU General Public License
- # along with piured-engine.If not, see <http://www.gnu.org/licenses/>.
- *
- */
-"use strict"; // good practice - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
-
-
 import {Point} from "./Point.js";
-import {Interval} from "./Interval.js";
+import {Interval, IntervalSide} from "./Interval.js";
 
-class Curve {
+export class Curve {
 
 
-    _intervalList = [] ;
+    private _intervalList: Interval[] = [] ;
 
-    constructor() {
+    constructor() {}
 
-    }
-
-    addInterval(interval) {
+    addInterval(interval: Interval) {
 
         this._intervalList.push(interval) ;
 
     }
 
+    scryY ( p: Point ): Point {
 
-    scryY ( p ) {
-
-        for (let i = 0 ; i < this._intervalList.length ; ++i ) {
-
-            let interval = this._intervalList [ i ] ;
-
+        for (let interval of this._intervalList) {
             if ( interval.isInIntervalX(p) ) {
-
                 p.y = interval.scryY(p.x) ;
-
                 return p ;
-
             }
-
         }
-
+        throw new Error(`Could not scryY: no interval defined for point ${p}`)
     }
 
 
-    scryX ( p ) {
+    scryX ( p: Point ): Point {
 
-        for (let i = 0 ; i < this._intervalList.length ; ++i ) {
-
-            let interval = this._intervalList [ i ] ;
-
+        for (let interval of this._intervalList) {
             if ( interval.isInIntervalY(p) ) {
-
                 p.x = interval.scryX(p.y) ;
-
                 return p ;
-
             }
-
         }
-
+        throw new Error(`Could not scryX: no interval defined for point ${p}`)
     }
 
-    findIntervalsBetweenX(x1, x2) {
+    findIntervalsBetweenX(x1: number, x2: number): Interval[] {
 
-        let intervals = [] ;
+        let intervals: Interval[] = [] ;
         let p1 = new Point(x1,0) ;
         let p2 = new Point(x2,0) ;
         let firstit = 0 ;
 
         // find first interval
         for (let i = 0 ; i < this._intervalList.length ; i++) {
-
             let itvl = this._intervalList[i] ;
-
             if ( itvl.isInIntervalX(p1) ) {
                 intervals.push(itvl) ;
                 firstit = i ;
                 break;
             }
-
         }
 
         //add remainder
         for (let i = firstit ; i < this._intervalList.length ; i++) {
-
             let itvl = this._intervalList[i] ;
-
             if (! intervals.includes(itvl)) {
                 intervals.push(itvl) ;
             }
-
             if ( itvl.isInIntervalX(p2) ) {
                 break;
             }
-
         }
-
         return intervals ;
 
     }
 
-    findIntervalsBetweenY(y1, y2) {
+    findIntervalsBetweenY(y1: number, y2: number): Interval[] {
 
-        let intervals = [] ;
+        let intervals: Interval[] = [] ;
         let p1 = new Point(0,y1) ;
         let p2 = new Point(0,y2) ;
         let firstit = 0 ;
 
         // find first interval
         for (let i = 0 ; i < this._intervalList.length ; i++) {
-
             let itvl = this._intervalList[i] ;
-
             if ( itvl.isInIntervalY(p1) ) {
                 intervals.push(itvl) ;
                 firstit = i ;
                 break;
             }
-
         }
-
         //add remainder
         for (let i = firstit ; i < this._intervalList.length ; i++) {
-
             let itvl = this._intervalList[i] ;
-
             if (! intervals.includes(itvl)) {
                 intervals.push(itvl) ;
             }
-
             if ( itvl.isInIntervalY(p2) ) {
                 break;
             }
-
         }
 
         return intervals ;
 
     }
 
-    findIntervalAtY(y) {
+    findIntervalAtY(y: number): Interval {
         let p1 = new Point(0,y) ;
 
         // find first interval
-        for (let i = 0 ; i < this._intervalList.length ; i++) {
-
-            let itvl = this._intervalList[i] ;
-
+        for (let itvl of this._intervalList) {
             if ( itvl.isInIntervalY(p1) ) {
                 return itvl ;
             }
-
         }
+
+        throw new Error(`Could not find interval at y given ${y}`)
     }
 
-    findIntervalsFromY(y) {
+    findIntervalsFromY(y: number): Interval[] {
 
-        let intervals = [] ;
+        let intervals: Interval[] = [] ;
         let p1 = new Point(0,y) ;
         let firstit = 0 ;
 
         // find first interval
         for (let i = 0 ; i < this._intervalList.length ; i++) {
-
             let itvl = this._intervalList[i] ;
-
             if ( itvl.isInIntervalY(p1) ) {
                 intervals.push(itvl) ;
                 firstit = i ;
                 break;
             }
-
         }
         //add remainder
         for (let i = firstit + 1 ; i < this._intervalList.length ; i++) {
             let itvl = this._intervalList[i] ;
                 intervals.push(itvl) ;
         }
-
         return intervals ;
 
     }
 
-    splitIntervalAtY(interval, y) {
+    splitIntervalAtY(interval: Interval, y: number): number {
         let index = this._intervalList.findIndex( itvl => itvl === interval) ;
 
 
-        if ( interval.sideOfInIntervalAtY(y) === 'right') {
+        if ( interval.sideOfInIntervalAtY(y) === IntervalSide.right) {
             interval.p2 = new Point(interval.scryX(y+1.0),y+1.0) ;
             this.splitIntervalAtY(interval,y) ;
             return ;
-        } else if ( interval.sideOfInIntervalAtY(y) === 'left' ) {
+        } else if ( interval.sideOfInIntervalAtY(y) === IntervalSide.left ) {
             interval.p1 = new Point(interval.scryX(y-1.0), y-1.0) ;
             this.splitIntervalAtY(interval,y) ;
             return ;
@@ -225,16 +165,14 @@ class Curve {
         return index ;
     }
 
-    addIntervalAtIndex(index, itvl) {
+    addIntervalAtIndex(index: number, itvl: Interval): void {
         this._intervalList.splice(index,0,itvl) ;
     }
 
-    getIntervalsFromIndex(index) {
+    getIntervalsFromIndex(index: number): Interval[] {
         return this._intervalList.slice(index) ;
     }
 
 
 
 }
-
-export {Curve} ;

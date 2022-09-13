@@ -1,36 +1,22 @@
-/*
- * # Copyright (C) Pedro G. Bascoy
- # This file is part of piured-engine <https://github.com/piulin/piured-engine>.
- #
- # piured-engine is free software: you can redistribute it and/or modify
- # it under the terms of the GNU General Public License as published by
- # the Free Software Foundation, either version 3 of the License, or
- # (at your option) any later version.
- #
- # piured-engine is distributed in the hope that it will be useful,
- # but WITHOUT ANY WARRANTY; without even the implied warranty of
- # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- # GNU General Public License for more details.
- #
- # You should have received a copy of the GNU General Public License
- # along with piured-engine.If not, see <http://www.gnu.org/licenses/>.
- *
- */
 'use strict'; // good practice - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
 
 import { GameObject } from '../GameObject.js';
 import * as TWEEN from '@tweenjs/tween.js';
+import {ResourceManager} from "../../Resources/ResourceManager";
+import {Engine} from "../../Engine";
+import {Panels} from "../../Types/Panels";
 
-class StepBounce extends GameObject {
+export class StepBounce extends GameObject {
     _mesh;
     _kind;
 
-    _spritePosition;
-    _stepAnimationRate;
-    _animationDelta;
-    _tweenOpacityEffect;
+    _spritePosition: number;
+    _stepAnimationRate: number;
+    _animationDelta: number;
+    // TODO: type??
+    _tweenOpacityEffect?: any;
 
-    constructor(resourceManager, engine, kind, stepAnimationRate, noteskin) {
+    constructor(resourceManager: ResourceManager, engine: Engine, kind: Panels, stepAnimationRate: number, noteskin: string) {
         super(resourceManager, engine);
         this._kind = kind;
         this._stepAnimationRate = stepAnimationRate;
@@ -38,17 +24,14 @@ class StepBounce extends GameObject {
             this._kind,
             noteskin
         );
-        this._tweenOpacityEffect = undefined;
+        this._spritePosition = 0;
+        this._animationDelta = 0;
     }
 
     ready() {
-        this._spritePosition = 0;
-        this._animationDelta = 0;
 
         this._mesh.material.map.repeat.set(1 / 3, 1 / 2);
-
         let scale = 1.0;
-
         this._mesh.material.color.r = scale;
         this._mesh.material.color.g = scale;
         this._mesh.material.color.b = scale;
@@ -73,7 +56,7 @@ class StepBounce extends GameObject {
         new TWEEN.Tween(this._mesh.scale).to({ x: 1.3, y: 1.3 }, time).start();
     }
 
-    update(delta) {
+    update(delta: number) {
         let timeStamp = this._animationDelta + delta;
 
         let movement = timeStamp * this._stepAnimationRate;
@@ -102,5 +85,3 @@ class StepBounce extends GameObject {
         return this._mesh;
     }
 }
-
-export { StepBounce };

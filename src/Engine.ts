@@ -180,7 +180,7 @@ class Engine {
     private _onKeyDownList: KeyInput[] = [];
     private _onKeyUpList = [];
     private _onTouchDownList: TouchInput[] = [];
-    private _onTouchUpList = [];
+    private _onTouchUpList: TouchInput[] = [];
     private _inputFrameLogList = [];
     private _id?: string;
 
@@ -502,7 +502,7 @@ class Engine {
      * }
      */
     queryStageType(level: number) {
-        return this.song.getLevelStyle(level);
+        return this.song?.getLevelStyle(level);
     }
 
     /**
@@ -515,7 +515,7 @@ class Engine {
      */
     start() {
         this.performReady();
-        this.song.play();
+        this.song?.play();
     }
     /**
      * Schedules when the engine should start playing the song and starts the rendering main loop.
@@ -540,7 +540,7 @@ class Engine {
             return Number(new Date());
         }
     ) {
-        this.song.startPlayBack(dateToStart, getDateFn);
+        this.song?.startPlayBack(dateToStart, getDateFn);
         this.animate();
     }
 
@@ -554,7 +554,7 @@ class Engine {
 
         this.freeEngineResources();
 
-        const performances = this.stage.retrievePerformancePlayerStages();
+        const performances = this.stage?.retrievePerformancePlayerStages();
 
         if (this._onStageCleared !== undefined) {
             this._onStageCleared(performances);

@@ -1,45 +1,20 @@
-/*
- * # Copyright (C) Pedro G. Bascoy
- # This file is part of piured-engine <https://github.com/piulin/piured-engine>.
- #
- # piured-engine is free software: you can redistribute it and/or modify
- # it under the terms of the GNU General Public License as published by
- # the Free Software Foundation, either version 3 of the License, or
- # (at your option) any later version.
- #
- # piured-engine is distributed in the hope that it will be useful,
- # but WITHOUT ANY WARRANTY; without even the implied warranty of
- # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- # GNU General Public License for more details.
- #
- # You should have received a copy of the GNU General Public License
- # along with piured-engine.If not, see <http://www.gnu.org/licenses/>.
- *
- */
-"use strict"; // good practice - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
-
-
-
-
 import {Second2Beat} from "./Second2Beat.js";
 import {Point} from "./Point.js";
+import {Curve} from "./Curve";
 
-class Second2Displacement {
+export class Second2Displacement {
 
 
-    _curve ;
-    _scrolls ;
-    _s2b ;
+    _curve: Curve ;
+    _scrolls: number[][] ;
+    _s2b: Second2Beat ;
 
-    constructor(scrolls, bpms, s2b) {
+    constructor(scrolls: number[][], bpms: number[][], s2b: Second2Beat) {
 
         this._scrolls = Array.from(scrolls) ;
         this._s2b = s2b ;
         this._curve = new Second2Beat(bpms)._curve ;
-
-
         let tolerance = 0.00001 ;
-
 
         for ( let i = 0 ; i < this._scrolls.length -1 ; i++ ) {
 
@@ -118,19 +93,11 @@ class Second2Displacement {
 
         }
 
-
-
     }
 
-    scry(value) {
-
+    scry(value: number): Point {
         let p = new Point(value, 0 ) ;
         return this._curve.scryY(p) ;
-
     }
 
-
-
 }
-
-export {Second2Displacement} ;
