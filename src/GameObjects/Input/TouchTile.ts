@@ -56,7 +56,7 @@ class TouchTile extends GameObject {
 
         this._mesh.material.map.repeat.set(1 / 3, 1 / 2);
 
-        let scale = 1.0;
+        const scale = 1.0;
 
         this._mesh.material.color.r = scale;
         this._mesh.material.color.g = scale;
@@ -70,18 +70,18 @@ class TouchTile extends GameObject {
         // this._mesh.updateWorldMatrix() ;
         // Get 3D positions of top left corner (assuming they're not rotated)
 
-        let worldPosition = new THREE.Vector3();
-        let worldScale = new THREE.Vector3();
+        const worldPosition = new THREE.Vector3();
+        const worldScale = new THREE.Vector3();
 
         this._mesh.getWorldPosition(worldPosition);
         this._mesh.getWorldScale(worldScale);
-        let topLeft = new THREE.Vector3(
+        const topLeft = new THREE.Vector3(
             worldPosition.x - worldScale.x / 2.0,
             worldPosition.y + worldScale.y / 2.0,
             worldPosition.z
         );
 
-        let downRight = new THREE.Vector3(
+        const downRight = new THREE.Vector3(
             worldPosition.x + worldScale.x / 2.0,
             worldPosition.y - worldScale.y / 2.0,
             worldPosition.z
@@ -101,13 +101,13 @@ class TouchTile extends GameObject {
     }
 
     get padding() {
-        let worldScale = new THREE.Vector3();
+        const worldScale = new THREE.Vector3();
         this._mesh.getWorldScale(worldScale);
         return this._padding * worldScale.x;
     }
 
     isTouched(x: number, y: number) {
-        let [topLeftX, topLeftY, downRightX, downRightY] =
+        const [topLeftX, topLeftY, downRightX, downRightY] =
             this.getScreenPositionInPixels();
         const padding = this.padding;
         if (
@@ -158,9 +158,9 @@ class TouchTile extends GameObject {
     }
 
     updateTextureAnimation(delta: any) {
-        let timeStamp = this._animationDelta + delta;
+        const timeStamp = this._animationDelta + delta;
 
-        let movement = timeStamp * this._stepAnimationRate;
+        const movement = timeStamp * this._stepAnimationRate;
 
         if (movement > 1) {
             this._spritePosition = (this._spritePosition + 1) % 6;

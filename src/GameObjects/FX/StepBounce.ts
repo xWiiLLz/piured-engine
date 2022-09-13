@@ -2,21 +2,29 @@
 
 import { GameObject } from '../GameObject.js';
 import * as TWEEN from '@tweenjs/tween.js';
-import {ResourceManager} from "../../Resources/ResourceManager";
-import {Engine} from "../../Engine";
-import {Panels} from "../../Types/Panels";
+import { ResourceManager } from '../../Resources/ResourceManager';
+import { Engine } from '../../Engine';
+import { Panels } from '../../Types/Panels';
+import { Tween } from '@tweenjs/tween.js';
 
 export class StepBounce extends GameObject {
-    _mesh;
-    _kind;
+    _mesh: ReturnType<ResourceManager['constructStepBounce']>;
+    _kind: Panels;
 
     _spritePosition: number;
     _stepAnimationRate: number;
     _animationDelta: number;
-    // TODO: type??
-    _tweenOpacityEffect?: any;
 
-    constructor(resourceManager: ResourceManager, engine: Engine, kind: Panels, stepAnimationRate: number, noteskin: string) {
+    // TODO: type??
+    _tweenOpacityEffect?: Tween<THREE.MeshBasicMaterial>;
+
+    constructor(
+        resourceManager: ResourceManager,
+        engine: Engine,
+        kind: Panels,
+        stepAnimationRate: number,
+        noteskin: string
+    ) {
         super(resourceManager, engine);
         this._kind = kind;
         this._stepAnimationRate = stepAnimationRate;
@@ -29,9 +37,8 @@ export class StepBounce extends GameObject {
     }
 
     ready() {
-
-        this._mesh.material.map.repeat.set(1 / 3, 1 / 2);
-        let scale = 1.0;
+        this._mesh.material.map?.repeat.set(1 / 3, 1 / 2);
+        const scale = 1.0;
         this._mesh.material.color.r = scale;
         this._mesh.material.color.g = scale;
         this._mesh.material.color.b = scale;
@@ -42,7 +49,7 @@ export class StepBounce extends GameObject {
         const time = 380;
         const delayOpacity = 250;
         this._mesh.material.opacity = 1.0;
-        this._mesh.scale.set(1, 1);
+        this._mesh.scale.set(1, 1, 1);
 
         // for early stopping the tween
         if (this._tweenOpacityEffect) {
@@ -57,9 +64,9 @@ export class StepBounce extends GameObject {
     }
 
     update(delta: number) {
-        let timeStamp = this._animationDelta + delta;
+        const timeStamp = this._animationDelta + delta;
 
-        let movement = timeStamp * this._stepAnimationRate;
+        const movement = timeStamp * this._stepAnimationRate;
 
         if (movement > 1) {
             this._spritePosition = (this._spritePosition + 1) % 6;
@@ -73,7 +80,7 @@ export class StepBounce extends GameObject {
 
             const YOffset3x2 = row * (1 / 2);
 
-            this._mesh.material.map.offset.set(XOffset3x2, YOffset3x2);
+            this._mesh.material.map?.offset.set(XOffset3x2, YOffset3x2);
 
             this._animationDelta = 0;
         } else {

@@ -516,6 +516,7 @@ class ResourceManager {
                     new AdditiveMaterial(textureDict['SUR'].cloneMap()).material
                 );
                 break;
+            default:
             case 'dr':
                 return new THREE.Mesh(
                     this._geometryDict['S'].stepGeometry,

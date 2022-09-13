@@ -2,22 +2,27 @@
 
 import { GameObject } from '../GameObject.js';
 import * as TWEEN from '@tweenjs/tween.js';
-import {ResourceManager} from "../../Resources/ResourceManager";
-import {Panels} from "../../Types/Panels";
-import {Engine} from "../../Engine";
+import { ResourceManager } from '../../Resources/ResourceManager';
+import { Panels } from '../../Types/Panels';
+import { Engine } from '../../Engine';
 
 export class WhiteTap extends GameObject {
     _mesh;
     _kind;
     _tweenOpacityEffect?: any;
 
-    constructor(resourceManager: ResourceManager, engine: Engine, kind: Panels, noteskin: string) {
+    constructor(
+        resourceManager: ResourceManager,
+        engine: Engine,
+        kind: Panels,
+        noteskin: string
+    ) {
         super(resourceManager, engine);
         this._kind = kind;
         // this._mesh = this._resourceManager.constructGenericTap( ) ;
 
         // Create one step out of the five available.
-        let tap = this._resourceManager.constructGenericWhiteTap(noteskin);
+        const tap = this._resourceManager.constructGenericWhiteTap(noteskin);
         tap.material.map.repeat.set(1 / 5, 1 / 2);
 
         switch (kind) {

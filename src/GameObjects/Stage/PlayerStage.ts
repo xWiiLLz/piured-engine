@@ -92,15 +92,15 @@ class PlayerStage extends GameObject {
 
     configureKeyInputPlayerStage(inputConfig) {
         // Create a KeyInput object
-        let playerInput = new KeyInput(
+        const playerInput = new KeyInput(
             this._resourceManager,
             this.engine,
             this.frameLog
         );
 
         // Pad ids are used for identifying steps in double-style.
-        let pad1Id = '0';
-        let pad2Id = '1';
+        const pad1Id = '0';
+        const pad2Id = '1';
 
         // We create two pads. Theoretically, more than 2 pads can be added, but in practice we only have either one or two.
         playerInput.addPad(inputConfig.lpad, pad1Id);
@@ -117,7 +117,7 @@ class PlayerStage extends GameObject {
 
     configureTouchInputPlayerStage(inputConfig) {
         // Create a TouchInput object
-        let playerInput = new TouchInput(
+        const playerInput = new TouchInput(
             this._resourceManager,
             this.engine,
             this.frameLog,
@@ -125,8 +125,8 @@ class PlayerStage extends GameObject {
         );
 
         // We create two pads. Theoretically, more than 2 pads can be added, but in practice we only have either one or two.
-        let pad1Id = '0';
-        let pad2Id = '1';
+        const pad1Id = '0';
+        const pad2Id = '1';
 
         // We add  the first touchpad (pump-single)
         playerInput.addTouchPad(pad1Id);
@@ -154,13 +154,13 @@ class PlayerStage extends GameObject {
     }
 
     configureRemoteInputPlayerStage(inputConfig) {
-        let playerInput = new RemoteInput(
+        const playerInput = new RemoteInput(
             this._resourceManager,
             this.engine,
             this.frameLog
         );
-        let pad1Id = '0';
-        let pad2Id = '1';
+        const pad1Id = '0';
+        const pad2Id = '1';
         playerInput.addPad(pad1Id);
         // if ( this._song.getLevelStyle(this._level) === 'pump-double' || this._song.getLevelStyle(this._level) === 'pump-halfdouble') {
         playerInput.addPad(pad2Id);
@@ -281,7 +281,7 @@ class PlayerStage extends GameObject {
 
     // Construct generic receptor
     getReceptor(padId) {
-        let receptor = new Receptor(
+        const receptor = new Receptor(
             this._resourceManager,
             this.engine,
             this.beatManager,
@@ -336,7 +336,7 @@ class PlayerStage extends GameObject {
     }
 
     getLifeBar(kind) {
-        let lifebar = new LifeBar(
+        const lifebar = new LifeBar(
             this._resourceManager,
             this.engine,
             this.beatManager,
@@ -367,7 +367,7 @@ class PlayerStage extends GameObject {
     }
 
     animateReceptorFX(stepList) {
-        for (var step of stepList) {
+        for (const step of stepList) {
             this.padReceptors[step.padId].animateExplosionStep(step);
         }
     }
