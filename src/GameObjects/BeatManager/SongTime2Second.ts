@@ -74,22 +74,24 @@ class SongTime2Second {
             false
         );
 
-        this._curve.addIntervalAtIndex(itvlIndex + 1, flatItvl);
+        if (itvlIndex !== null) {
+            this._curve.addIntervalAtIndex(itvlIndex + 1, flatItvl);
 
-        const remainderIntervals = this._curve.getIntervalsFromIndex(
-            itvlIndex + 2
-        );
+            const remainderIntervals = this._curve.getIntervalsFromIndex(
+                itvlIndex + 2
+            );
 
-        const diff = x2 - x1;
+            const diff = x2 - x1;
 
-        for (let j = 0; j < remainderIntervals.length; j++) {
-            const itvl = remainderIntervals[j];
-            itvl.p1.x += diff;
-            itvl.p2.x += diff;
+            for (let j = 0; j < remainderIntervals.length; j++) {
+                const itvl = remainderIntervals[j];
+                itvl.p1.x += diff;
+                itvl.p2.x += diff;
+            }
         }
     }
 
-    raise(b1, b2) {
+    raise(b1: number, b2: number) {
         const y1 = this._s2b.reverseScry(b1).x;
         const y2 = this._s2b.reverseScry(b2).x;
 
@@ -119,12 +121,12 @@ class SongTime2Second {
         }
     }
 
-    scry(value) {
+    scry(value: number) {
         const p = new Point(value, 0);
         return this._curve.scryY(p);
     }
 
-    reverseScry(value) {
+    reverseScry(value: number) {
         const p = new Point(0.0, value);
         return this._curve.scryX(p);
     }

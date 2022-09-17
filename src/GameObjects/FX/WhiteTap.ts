@@ -7,8 +7,8 @@ import { Panels } from '../../Types/Panels';
 import { Engine } from '../../Engine';
 
 export class WhiteTap extends GameObject {
-    _mesh;
-    _kind;
+    _mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
+    _kind: Panels;
     _tweenOpacityEffect?: any;
 
     constructor(
@@ -23,23 +23,23 @@ export class WhiteTap extends GameObject {
 
         // Create one step out of the five available.
         const tap = this._resourceManager.constructGenericWhiteTap(noteskin);
-        tap.material.map.repeat.set(1 / 5, 1 / 2);
+        tap.material.map?.repeat.set(1 / 5, 1 / 2);
 
         switch (kind) {
             case 'dl':
-                tap.material.map.offset.set(0, 1 / 2);
+                tap.material.map?.offset.set(0, 1 / 2);
                 break;
             case 'ul':
-                tap.material.map.offset.set(1 / 5, 1 / 2);
+                tap.material.map?.offset.set(1 / 5, 1 / 2);
                 break;
             case 'c':
-                tap.material.map.offset.set(2 / 5, 1 / 2);
+                tap.material.map?.offset.set(2 / 5, 1 / 2);
                 break;
             case 'ur':
-                tap.material.map.offset.set(3 / 5, 1 / 2);
+                tap.material.map?.offset.set(3 / 5, 1 / 2);
                 break;
             case 'dr':
-                tap.material.map.offset.set(4 / 5, 1 / 2);
+                tap.material.map?.offset.set(4 / 5, 1 / 2);
                 break;
         }
 
@@ -48,13 +48,11 @@ export class WhiteTap extends GameObject {
         this._tweenOpacityEffect = undefined;
     }
 
-    ready() {}
-
     animate() {
         const time = 250;
         const opacityDelay = 100;
         this._mesh.material.opacity = 1.0;
-        this._mesh.scale.set(1, 1);
+        this._mesh.scale.set(1, 1, 1);
 
         if (this._tweenOpacityEffect) {
             TWEEN.remove(this._tweenOpacityEffect);
@@ -66,8 +64,6 @@ export class WhiteTap extends GameObject {
             .start();
         new TWEEN.Tween(this._mesh.scale).to({ x: 1.2, y: 1.2 }, time).start();
     }
-
-    update(delta: number) {}
 
     get object() {
         return this._mesh;

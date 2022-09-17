@@ -123,21 +123,20 @@ export class Curve {
         return intervals;
     }
 
-    splitIntervalAtY(interval: Interval, y: number): number {
+    // TODO: test this function
+    splitIntervalAtY(interval: Interval, y: number): number | null {
         const index = this._intervalList.findIndex((itvl) => itvl === interval);
 
         if (interval.sideOfInIntervalAtY(y) === IntervalSide.right) {
             interval.p2 = new Point(interval.scryX(y + 1.0), y + 1.0);
-            this.splitIntervalAtY(interval, y);
-            return;
+            return this.splitIntervalAtY(interval, y);
         } else if (interval.sideOfInIntervalAtY(y) === IntervalSide.left) {
             interval.p1 = new Point(interval.scryX(y - 1.0), y - 1.0);
-            this.splitIntervalAtY(interval, y);
-            return;
+            return this.splitIntervalAtY(interval, y);
         }
 
         if (y === interval.p1.y || y === interval.p2.y) {
-            return;
+            return null;
         }
 
         const point1 = new Point(interval.scryX(y), y);

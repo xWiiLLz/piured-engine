@@ -1,50 +1,30 @@
-/*
- * # Copyright (C) Pedro G. Bascoy
- # This file is part of piured-engine <https://github.com/piulin/piured-engine>.
- #
- # piured-engine is free software: you can redistribute it and/or modify
- # it under the terms of the GNU General Public License as published by
- # the Free Software Foundation, either version 3 of the License, or
- # (at your option) any later version.
- #
- # piured-engine is distributed in the hope that it will be useful,
- # but WITHOUT ANY WARRANTY; without even the implied warranty of
- # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- # GNU General Public License for more details.
- #
- # You should have received a copy of the GNU General Public License
- # along with piured-engine.If not, see <http://www.gnu.org/licenses/>.
- *
- */
-'use strict'; // good practice - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
-
 import { GameObject } from '../GameObject.js';
 import * as TWEEN from '@tweenjs/tween.js';
+import { ResourceManager } from '../../Resources/ResourceManager';
+import { Engine } from '../../Engine';
+import * as THREE from 'three';
+import { Color } from 'three';
 
-class Digit extends GameObject {
-    _mesh;
-
-    constructor(resourceManager, engine) {
+export class Digit extends GameObject {
+    _mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
+    opacityFadeTween?: TWEEN.Tween<THREE.MeshBasicMaterial>;
+    burnTween?: TWEEN.Tween<Color>;
+    constructor(resourceManager: ResourceManager, engine: Engine) {
         super(resourceManager, engine);
 
         this._mesh = this._resourceManager.constructDigit();
 
-        this._mesh.material.map.repeat.set(1 / 4, 1 / 4);
-        this._mesh.material.map.offset.set(0, 3 / 4);
+        this._mesh.material.map?.repeat.set(1 / 4, 1 / 4);
+        this._mesh.material.map?.offset.set(0, 3 / 4);
 
         this._mesh.material.opacity = 0.0;
-
-        this.opacityFadeTween = null;
-        this.burnTween = null;
     }
-
-    ready() {}
-
-    update(delta) {}
 
     animate() {
         if (this.opacityFadeTween) {
             TWEEN.remove(this.opacityFadeTween);
+        }
+        if (this.burnTween) {
             TWEEN.remove(this.burnTween);
         }
 
@@ -52,7 +32,7 @@ class Digit extends GameObject {
         const diffuseAnimation = (22 / 60) * 1000;
         const time = (5 / 60) * 1000;
         this._mesh.material.opacity = 1.0;
-        let scale = 100.0;
+        const scale = 100.0;
 
         this._mesh.material.color.r = 1.0;
         this._mesh.material.color.g = 1.0;
@@ -74,17 +54,17 @@ class Digit extends GameObject {
             .start();
     }
 
-    displayDigit(digit) {
+    displayDigit(digit: number) {
         const [row, col] = this.getCoordinatesForDigit(digit);
         // console.log(index) ;
-        this._mesh.material.map.offset.set(col * (1 / 4), row * (1 / 4));
+        this._mesh.material.map?.offset.set(col * (1 / 4), row * (1 / 4));
     }
 
     hide() {
-        this._mesh.material.map.offset.set(1, 1);
+        this._mesh.material.map?.offset.set(1, 1);
     }
 
-    getCoordinatesForDigit(digit) {
+    getCoordinatesForDigit(digit: number): [number, number] {
         const col = digit % 4;
         const row = 3 - Math.floor(digit / 4);
 
@@ -95,5 +75,3 @@ class Digit extends GameObject {
         return this._mesh;
     }
 }
-
-export { Digit };

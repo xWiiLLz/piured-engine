@@ -8,7 +8,7 @@ import { Panels } from '../../Types/Panels';
 import { Tween } from '@tweenjs/tween.js';
 
 export class StepBounce extends GameObject {
-    _mesh: ReturnType<ResourceManager['constructStepBounce']>;
+    _mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
     _kind: Panels;
 
     _spritePosition: number;

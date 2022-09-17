@@ -1,54 +1,43 @@
-/*
- * # Copyright (C) Pedro G. Bascoy
- # This file is part of piured-engine <https://github.com/piulin/piured-engine>.
- #
- # piured-engine is free software: you can redistribute it and/or modify
- # it under the terms of the GNU General Public License as published by
- # the Free Software Foundation, either version 3 of the License, or
- # (at your option) any later version.
- #
- # piured-engine is distributed in the hope that it will be useful,
- # but WITHOUT ANY WARRANTY; without even the implied warranty of
- # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- # GNU General Public License for more details.
- #
- # You should have received a copy of the GNU General Public License
- # along with piured-engine.If not, see <http://www.gnu.org/licenses/>.
- *
- */
-'use strict'; // good practice - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
-
 import { GameObject } from '../GameObject.js';
 import * as TWEEN from '@tweenjs/tween.js';
+import { ResourceManager } from '../../Resources/ResourceManager';
+import { Engine } from '../../Engine';
+import { Color, Vector3 } from 'three';
 
-class Banner extends GameObject {
-    _mesh;
+export enum Grade {
+    perfect = 'p',
+    great = 'gr',
+    good = 'go',
+    bad = 'b',
+    miss = 'm',
+}
 
-    constructor(resourceManager, engine) {
+export class Banner extends GameObject {
+    _mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
+    scaleFadeTween?: TWEEN.Tween<Vector3>;
+    opacityFadeTween?: TWEEN.Tween<THREE.MeshBasicMaterial>;
+    burnTween?: TWEEN.Tween<Color>;
+    constructor(resourceManager: ResourceManager, engine: Engine) {
         super(resourceManager, engine);
 
         this._mesh = this._resourceManager.constructJudgmentBanner();
 
         // 0.6
-        this._mesh.material.map.repeat.set(1, 1 / 6);
-        this._mesh.material.map.offset.set(0, 0);
+        this._mesh.material.map?.repeat.set(1, 1 / 6);
+        this._mesh.material.map?.offset.set(0, 0);
         this._mesh.scale.set(0.6, 0.6, 1);
         this._mesh.material.opacity = 0.0;
-
-        this.scaleFadeTween = null;
-        this.opacityFadeTween = null;
-        this.burnTween = null;
     }
-
-    ready() {}
-
-    update(delta) {}
 
     animate() {
         // remove scheduled tweens
         if (this.scaleFadeTween) {
             TWEEN.remove(this.scaleFadeTween);
+        }
+        if (this.opacityFadeTween) {
             TWEEN.remove(this.opacityFadeTween);
+        }
+        if (this.burnTween) {
             TWEEN.remove(this.burnTween);
         }
 
@@ -58,14 +47,13 @@ class Banner extends GameObject {
 
         // schedule going out tweens for JUDGMENT
         this._mesh.material.opacity = 1.0;
-        let scale = 100.0;
 
         this._mesh.material.color.r = 1.0;
         this._mesh.material.color.g = 1.0;
         this._mesh.material.color.b = 1.0;
         // this._mesh.material.combine = THREE.AddOperation ;
         // this._mesh.material.lightMapIntensity = 5.0 ;
-        this._mesh.scale.set(0.6, 0.6);
+        this._mesh.scale.set(0.6, 0.6, 1.0);
 
         new TWEEN.Tween(this._mesh.material)
             .to({ opacity: 0.7 }, diffuseTimeWait)
@@ -85,7 +73,7 @@ class Banner extends GameObject {
             .delay(diffuseTimeWait)
             .start();
 
-        this._mesh.scale.set(0.87, 0.87);
+        this._mesh.scale.set(0.87, 0.87, 1.0);
         this._mesh.material.opacity = 1.0;
         this._mesh.position.y = this._mesh.scale.y / 5;
 
@@ -94,22 +82,22 @@ class Banner extends GameObject {
         new TWEEN.Tween(this._mesh.position).to({ y: 0 }, time).start();
     }
 
-    setGrade(grade) {
+    setGrade(grade: Grade) {
         switch (grade) {
-            case 'p':
-                this._mesh.material.map.offset.set(0, 5 / 6);
+            case Grade.perfect:
+                this._mesh.material.map?.offset.set(0, 5 / 6);
                 break;
-            case 'gr':
-                this._mesh.material.map.offset.set(0, 4 / 6);
+            case Grade.great:
+                this._mesh.material.map?.offset.set(0, 4 / 6);
                 break;
-            case 'go':
-                this._mesh.material.map.offset.set(0, 2 / 6);
+            case Grade.good:
+                this._mesh.material.map?.offset.set(0, 2 / 6);
                 break;
-            case 'b':
-                this._mesh.material.map.offset.set(0, 1 / 6);
+            case Grade.bad:
+                this._mesh.material.map?.offset.set(0, 1 / 6);
                 break;
-            case 'm':
-                this._mesh.material.map.offset.set(0, 0);
+            case Grade.miss:
+                this._mesh.material.map?.offset.set(0, 0);
                 break;
         }
     }
@@ -118,5 +106,3 @@ class Banner extends GameObject {
         return this._mesh;
     }
 }
-
-export { Banner };

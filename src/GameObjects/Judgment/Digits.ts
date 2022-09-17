@@ -1,39 +1,24 @@
-/*
- * # Copyright (C) Pedro G. Bascoy
- # This file is part of piured-engine <https://github.com/piulin/piured-engine>.
- #
- # piured-engine is free software: you can redistribute it and/or modify
- # it under the terms of the GNU General Public License as published by
- # the Free Software Foundation, either version 3 of the License, or
- # (at your option) any later version.
- #
- # piured-engine is distributed in the hope that it will be useful,
- # but WITHOUT ANY WARRANTY; without even the implied warranty of
- # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- # GNU General Public License for more details.
- #
- # You should have received a copy of the GNU General Public License
- # along with piured-engine.If not, see <http://www.gnu.org/licenses/>.
- *
- */
-'use strict'; // good practice - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
-
 import { GameObject } from '../GameObject.js';
 import { Digit } from './Digit.js';
 import * as THREE from 'three';
 import * as TWEEN from '@tweenjs/tween.js';
+import { ResourceManager } from '../../Resources/ResourceManager';
+import { Engine } from '../../Engine';
 
-class Digits extends GameObject {
-    _whiteDigits;
-
-    _whiteDigitsObjects = [];
-
-    _object;
-
-    constructor(resourceManager, engine, maxNumDigits) {
+export class Digits extends GameObject {
+    _whiteDigits: THREE.Object3D;
+    _whiteDigitsObjects: Digit[] = [];
+    _object: THREE.Object3D;
+    maxNumDigits: number;
+    XscaleDigits: number;
+    XsizeDigits: number;
+    opacityFadeTween?: TWEEN.Tween<THREE.MeshBasicMaterial>;
+    constructor(
+        resourceManager: ResourceManager,
+        engine: Engine,
+        maxNumDigits: number
+    ) {
         super(resourceManager, engine);
-
-        this.opacityFadeTween = null;
 
         this.maxNumDigits = maxNumDigits;
 
@@ -43,11 +28,11 @@ class Digits extends GameObject {
         this.XscaleDigits = 0.85;
         this.XsizeDigits = 60 / 80;
         // Load <count> number of digits into the arrays; one for each color
-        for (var i = 0; i < this.maxNumDigits; i++) {
-            let normal = new Digit(this._resourceManager, this.engine);
+        for (let i = 0; i < this.maxNumDigits; i++) {
+            const normal = new Digit(this._resourceManager, this.engine);
 
             // place them into position
-            normal.object.scale.set(this.XscaleDigits, this.XscaleDigits);
+            normal.object.scale.set(this.XscaleDigits, this.XscaleDigits, 1.0);
             normal.object.position.x =
                 i * this.XsizeDigits * normal.object.scale.x;
             this._whiteDigitsObjects.push(normal);
@@ -61,10 +46,6 @@ class Digits extends GameObject {
             2;
     }
 
-    ready() {}
-
-    update(delta) {}
-
     animate() {
         const diffuseTimeWait = (30 / 60) * 1000;
         const diffuseAnimation = (22 / 60) * 1000;
@@ -74,7 +55,7 @@ class Digits extends GameObject {
             TWEEN.remove(this.opacityFadeTween);
         }
 
-        for (let digit of this._whiteDigitsObjects) {
+        for (const digit of this._whiteDigitsObjects) {
             digit.animate();
         }
         this._object.scale.x = 1.05;
@@ -86,7 +67,7 @@ class Digits extends GameObject {
             .start();
     }
 
-    displayComboCount(currentCombo) {
+    displayComboCount(currentCombo: number) {
         const digitsInCount = currentCombo.toString().length;
         const neededDigits = digitsInCount > 3 ? digitsInCount : 3;
         const difference = this.maxNumDigits - neededDigits;
@@ -97,9 +78,9 @@ class Digits extends GameObject {
             ((neededDigits - 1) * this.XsizeDigits * this.XscaleDigits) / 2 +
             difference * this.XsizeDigits * this.XscaleDigits;
 
-        for (var i = 0; i < neededDigits; i++) {
+        for (let i = 0; i < neededDigits; i++) {
             const index = this._whiteDigitsObjects.length - i - 1;
-            let digit = this._whiteDigitsObjects[index];
+            const digit = this._whiteDigitsObjects[index];
             // make sure we show this digits
             const digitValue = Math.floor(
                 (currentCombo / Math.pow(10, i)) % 10
@@ -109,14 +90,14 @@ class Digits extends GameObject {
         }
 
         // do not show the remainder digits, using an offset out of the range.
-        for (var i = neededDigits; i < this._whiteDigitsObjects.length; i++) {
+        for (let i = neededDigits; i < this._whiteDigitsObjects.length; i++) {
             const index = this._whiteDigitsObjects.length - i - 1;
-            let digit = this._whiteDigitsObjects[index];
+            const digit = this._whiteDigitsObjects[index];
             digit.hide();
         }
     }
 
-    getCoordinatesForDigit(digit) {
+    getCoordinatesForDigit(digit: number): [number, number] {
         const col = digit % 4;
         const row = 3 - Math.floor(digit / 4);
 
@@ -127,5 +108,3 @@ class Digits extends GameObject {
         return this._object;
     }
 }
-
-export { Digits };

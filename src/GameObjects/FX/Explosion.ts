@@ -5,7 +5,7 @@ import { ResourceManager } from '../../Resources/ResourceManager';
 import { Engine } from '../../Engine';
 
 export class Explosion extends GameObject {
-    _mesh;
+    _mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
     _explosionAnimationRate: number;
     _lastStepTimeStamp: number;
     _animationPosition: number;
@@ -25,9 +25,9 @@ export class Explosion extends GameObject {
 
     ready() {
         // This acts as UV mapping.
-        this._mesh.material.map.repeat.set(2 / 20, 2 / 4);
+        this._mesh.material.map?.repeat.set(2 / 20, 2 / 4);
         // explosionMap.offset.set( 0 , 0 );
-        this._mesh.material.map.offset.set(1 / 20, 1 / 4);
+        this._mesh.material.map?.offset.set(1 / 20, 1 / 4);
 
         // explosionMap.blending = THREE.AdditiveBlending ;
 
@@ -49,7 +49,7 @@ export class Explosion extends GameObject {
     animate() {
         this._animationPosition = 0;
         this._lastStepTimeStamp = 0;
-        this._mesh.material.map.offset.set(1 / 20, 1 / 4);
+        this._mesh.material.map?.offset.set(1 / 20, 1 / 4);
     }
 
     update(delta: number) {
@@ -71,7 +71,7 @@ export class Explosion extends GameObject {
 
             if (movement > 1) {
                 this._animationPosition = this._animationPosition + 1;
-                this._mesh.material.map.offset.set(
+                this._mesh.material.map?.offset.set(
                     this._animationPosition * (1 / 5) + 1 / 20,
                     1 / 4
                 );

@@ -619,6 +619,7 @@ class ResourceManager {
             case 'ur':
                 texture = textureDict['SUR'].map;
                 break;
+            default:
             case 'dr':
                 texture = textureDict['SDR'].map;
                 break;
@@ -643,6 +644,7 @@ class ResourceManager {
             case 'ur':
                 texture = textureDict['HUR'].map;
                 break;
+            default:
             case 'dr':
                 texture = textureDict['HDR'].map;
                 break;

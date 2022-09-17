@@ -2,6 +2,7 @@ import { Engine } from '../../../Engine';
 import { ResourceManager } from '../../../Resources/ResourceManager';
 import { Panels } from '../../../Types/Panels';
 import { GameObject } from '../../GameObject';
+import { Grade } from '../../Judgment/Banner';
 
 type Step = {
     id: string;
@@ -17,7 +18,7 @@ export type FrameLogDto = {
     }[];
     receptorFX?: string[];
     judgment?: {
-        grade: number;
+        grade: Grade;
         combo: number;
         step: unknown;
     };
@@ -53,7 +54,7 @@ export class FrameLog extends GameObject {
         }
     }
 
-    logJudgment(grade: number, combo: number, step: unknown) {
+    logJudgment(grade: Grade, combo: number, step: unknown) {
         this._json.judgment = {
             grade,
             combo,
